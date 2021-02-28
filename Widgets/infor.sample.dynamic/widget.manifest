@@ -1,0 +1,10 @@
+{
+	"title": "Dynamic Sample",
+	"description": "Sample showing how to use dynamic components in a widget",
+	"version": "1.0",
+	"widgetId": "infor.sample.dynamic",
+	"type": "inline",
+	"name": "Dynamic Sample",
+	"framework": "angular",
+	"aotVersion": ""
+}

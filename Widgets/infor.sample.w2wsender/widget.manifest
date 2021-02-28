@@ -1,0 +1,26 @@
+{
+	"widgetId": "infor.sample.w2wsender",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Infor Sample Widget-to-Widget Sender",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"settingsUI": "metadata",
+	"settings": [
+		{
+			"name": "MessageType",
+			"type": "string",
+			"defaultValue": "widgetcommunication",
+			"labelId": "messageType"
+		}
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Widget-to-Widget Sender",
+			"widgetDescription": "Sample inline widget for sending messages to widgets registered to receive messages for a specific message type.",
+			"messageType": "Message type"
+		}
+	}
+}

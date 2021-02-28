@@ -1,0 +1,17 @@
+{
+	"widgetId": "infor.sample.angular.contextparameters",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Context parameters",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Context parameters",
+			"widgetDescription": "Resolve values from URL parameters on drillback to Homepages."
+		}
+	}
+}

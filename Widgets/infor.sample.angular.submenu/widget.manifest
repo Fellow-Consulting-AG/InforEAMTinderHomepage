@@ -1,0 +1,21 @@
+{
+	"widgetId": "infor.sample.angular.submenu",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Submenu - Sample",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"localization": {
+		"en-US": {
+			"disabledAction": "Disabled Action",
+			"logMessage": "Log a Message",
+			"submenu": "Submenu",
+			"toastMessage": "Show a Toast Message",
+			"widgetTitle": "Submenu - Sample",
+			"widgetDescription": "Submenu sample widget.",
+			"widgetText": "Use the widget menu top-right to inspect the submenu. If the subitems are not avaible, try editing the page and then save it."
+		}
+	}
+}

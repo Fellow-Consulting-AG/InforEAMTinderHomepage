@@ -1,0 +1,100 @@
+{
+	"defaultSeverity": "warning",
+	"rulesDirectory": [],
+	"extends": [
+		"tslint:recommended"
+	],
+	"jsRules": {},
+	"rules": {
+		"variable-name": [
+			true,
+			"ban-keywords",
+			"check-format",
+			"allow-pascal-case",
+			"allow-leading-underscore"
+		],
+		"no-boolean-literal-compare": false,
+		"max-classes-per-file": false,
+		"object-literal-shorthand": false,
+		"object-literal-sort-keys": false,
+		"jsdoc-format": {
+			"severity": "warning"
+		},
+		"indent": false,
+		"comment-format": false,
+		"array-type": false,
+		"object-literal-key-quotes": [
+			true,
+			"as-needed"
+		],
+		"no-return-await": true,
+		"max-line-length": false,
+		"no-reference": true,
+		"arrow-parens": false,
+		"trailing-comma": false,
+		"member-access": {
+			"options": "no-public"
+		},
+		"member-ordering": {
+			"options": {
+				"order": "fields-first"
+			}
+		},
+		"ban": [
+			true,
+			{
+				"name": [
+					"infor",
+					"companyon",
+					"client",
+					"sendMessage"
+				],
+				"message": "Use WidgetContext.send instead"
+			},
+			{
+				"name": [
+					"infor",
+					"companyon",
+					"client",
+					"registerMessageHandler"
+				],
+				"message": "Use WidgetContext.receive instead"
+			},
+			{
+				"name": [
+					"infor",
+					"companyon",
+					"client",
+					"unRegisterMessageHandler"
+				],
+				"message": "Use WidgetContext.send and WidgetContext.receive instead"
+			},
+			{
+				"name": [
+					"infor",
+					"companyon",
+					"client",
+					"sendPrepareDrillbackMessage"
+				],
+				"message": "Use WidgetContext.launch instead"
+			},
+			{
+				"name": [
+					"infor",
+					"companyon",
+					"client",
+					"sendPrepareFavoritesMessage"
+				],
+				"message": "Use WidgetContext.launch instead"
+			},
+			{
+				"name": [
+					"Soho",
+					"Locale",
+					"set"
+				],
+				"message": "Do not programmatically set locale. Modify path to lime/resources/en-US.js, or set devLanguage attribute in index.html instead."
+			}
+		]
+	}
+}

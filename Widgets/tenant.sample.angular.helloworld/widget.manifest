@@ -1,0 +1,98 @@
+{
+	"widgetId": "tenant.sample.angular.helloworld",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"author": "Company Sample corp",
+	"name": "Hello World Tenant",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"settingsUI": "metadata",
+	"settings": [
+		{
+			"name": "Message",
+			"type": "string",
+			"defaultValue": "Hello World",
+			"labelId": "message"
+		},
+		{
+			"name": "Color",
+			"type": "selector",
+			"defaultValue": "1A1A1A",
+			"labelId": "color",
+			"values": [
+				{
+					"text": "Amber",
+					"value": "E4882B"
+				},
+				{
+					"text": "Amethyst",
+					"value": "6E5282"
+				},
+				{
+					"text": "Azure",
+					"value": "1D5F8A"
+				},
+				{
+					"text": "Emerald",
+					"value": "56932E"
+				},
+				{
+					"text": "Graphite",
+					"value": "1A1A1A"
+				},
+				{
+					"text": "Ruby",
+					"value": "A13030"
+				},
+				{
+					"text": "Slate",
+					"value": "313236"
+				},
+				{
+					"text": "Turquoise",
+					"value": "317C73"
+				}
+			]
+		},
+		{
+			"name": "TextSize",
+			"type": "radio",
+			"defaultValue": "medium",
+			"labelId": "textSize",
+			"values": [
+				{
+					"textId": "small",
+					"value": "small"
+				},
+				{
+					"textId": "medium",
+					"value": "medium"
+				},
+				{
+					"textId": "large",
+					"value": "large"
+				},
+				{
+					"textId": "extraLarge",
+					"value": "extraLarge"
+				}
+			]
+		}
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Hello World Tenant",
+			"widgetDescription": "Hello World sample tenant widget.",
+			"message": "Message",
+			"color": "Color",
+			"textSize": "Text size",
+			"small": "Small",
+			"medium": "Medium",
+			"large": "Large",
+			"extraLarge": "Extra large"
+		}
+	}
+}

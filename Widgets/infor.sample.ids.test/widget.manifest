@@ -1,0 +1,23 @@
+{
+	"widgetId": "infor.sample.ids.test",
+	"type": "inline",
+	"aotVersion": "",
+	"framework": "angular",
+	"name": "IDS Test Widget",
+	"defaultSize": "4,2",
+	"version": "1.0",
+	"category": "utilities",
+	"isNativeInline": true,
+	"isEarlyAccess": true,
+	"targets": [
+		"default",
+		"mobile",
+		"context"
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "IDS Test widget",
+			"widgetDescription": "Uses common IDS components in main UI & modal, helpful when verifying IDS updates."
+		}
+	}
+}

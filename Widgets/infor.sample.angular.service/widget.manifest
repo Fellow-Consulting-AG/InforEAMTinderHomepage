@@ -1,0 +1,18 @@
+{
+	"widgetId": "infor.sample.angular.service",
+	"type": "inline",
+	"version": "1.0",
+	"name": "Angular Service Sample",
+	"framework": "angular",
+	"aotVersion": "",
+	"targets": [
+		"default",
+		"mobile"
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Angular Service Sample",
+			"widgetDescription": "Angular Service sample widget"
+		}
+	}
+}

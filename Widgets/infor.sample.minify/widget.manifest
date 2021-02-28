@@ -1,0 +1,26 @@
+{
+	"widgetId": "infor.sample.minify",
+	"type": "inline",
+	"name": "Minify Sample",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"framework": "angular",
+	"aotVersion": "",
+	"settings": [
+		{
+			"name": "Message",
+			"type": "string",
+			"defaultValue": "Minify",
+			"labelId": "message"
+		}
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Minify",
+			"widgetDescription": "Minify Sample Widget.",
+			"message": "Message"
+		}
+	}
+}

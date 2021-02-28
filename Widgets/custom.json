@@ -1,0 +1,23 @@
+﻿{
+	"enableSettings": true,
+	"enableTitleEdit": true,
+	"custom": {
+		"settings": {
+			"textStyle": "Normal",
+			"textColor": "#8E72A4"
+		},
+		"metadata": [
+			{
+				"name": "textStyle",
+				"isEnabled": true,
+				"isVisible": true
+			},
+			{
+				"name": "textColor",
+				"isEnabled": true,
+				"isVisible": true
+			}
+		],
+		"title": "Publish test X"
+	}
+}

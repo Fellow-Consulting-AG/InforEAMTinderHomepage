@@ -1,0 +1,15 @@
+{
+	"widgetId": "infor.sample.external.app",
+	"type": "external",
+	"name": "External with Application dependency",
+	"version": "1.0",
+	"applicationLogicalId": "lid://infor.externalapp",
+	"category": "application",
+	"url": "{Scheme}://{Hostname}:{Port}",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Application widget with URL templating",
+			"widgetDescription": "External sample widget that opens a page in an iframe relative the application."
+		}
+	}
+}

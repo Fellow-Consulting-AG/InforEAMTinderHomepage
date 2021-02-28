@@ -1,0 +1,21 @@
+{
+	"widgetId": "com.muhammadbinyusrat.maps",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Infor Sample Cardlist",
+	"version": "1.0",
+	"defaultSize": "3,1",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Maps",
+			"widgetDescription": "Maps widget for Infor Homepages",
+			"order": "Order",
+			"ascending": "Ascending",
+			"descending": "Descending"
+		}
+	}
+}

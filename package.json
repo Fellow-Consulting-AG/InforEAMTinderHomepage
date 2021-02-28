@@ -1,0 +1,57 @@
+{
+	"name": "InforHomepagesWidgetSDK",
+	"version": "3.0.0",
+	"description": "Infor Homepages Widget SDK",
+	"main": "",
+	"author": "Infor",
+	"private": true,
+	"dependencies": {
+		"@angular/animations": "11.0.7",
+		"@angular/common": "11.0.7",
+		"@angular/compiler": "11.0.7",
+		"@angular/core": "11.0.7",
+		"@angular/forms": "11.0.7",
+		"@angular/platform-browser": "11.0.7",
+		"@angular/platform-browser-dynamic": "11.0.7",
+		"@angular/router": "11.0.7",
+		"@types/core-js": "0.9.41",
+		"@types/googlemaps": "^3.43.3",
+		"@types/jquery": "3.3.38",
+		"@types/systemjs": "0.20.2",
+		"core-js": "^2.5.4",
+		"marked": "^0.7.0",
+		"rxjs": "^6.5.3",
+		"systemjs": "0.20.19",
+		"systemjs-builder": "0.16.12",
+		"tslib": "^1.10.0",
+		"typescript": "~4.0.5",
+		"zone.js": "~0.10.3"
+	},
+	"devDependencies": {
+		"@angular/compiler-cli": "11.0.7",
+		"archiver": "2.0.3",
+		"browser-sync": "^2.26.7",
+		"del": "~2.2.0",
+		"fs-extra": "^4.0.2",
+		"ids-enterprise-typings": "9.1.0",
+		"jsonfromresx": "^1.0.1",
+		"minimist": "1.2.0",
+		"ncp": "2.0.0",
+		"tslint": "^5.16.0"
+	},
+	"scripts": {
+		"start": "node server",
+		"server": "node server",
+		"proxy": "node proxy",
+		"build:watch": "tsc -w -p ./Widgets",
+		"lint": "tslint -c Widgets/tslint.json -p Widgets",
+		"lint:strict": "tslint -c Widgets/tslint-strict.json -p Widgets"
+	},
+	"config": {
+		"server_port": "8080",
+		"server_path": "./Widgets",
+		"proxy_local_port": "8083",
+		"proxy_remote_host": "domain.server.com",
+		"proxy_remote_port": "443"
+	}
+}

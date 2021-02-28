@@ -1,0 +1,30 @@
+﻿{
+	"id": "59d398b2-17bd-4a6e-8913-be4b7853115b",
+	"type": "inline",
+	"version": "1.0",
+	"moduleName": "widget",
+	"title": "Customized Hello world",
+	"category": "application",
+	"isCustomized": true,
+	"concreteWidgetId": "infor.sample.angular.helloworld",
+	"enableTitleSetting": true,
+	"enableSettings": true,
+	"settings": [
+		{
+			"name": "Message",
+			"type": "string",
+			"defaultValue": "Customized message",
+			"values": null,
+			"labelId": "Message",
+			"isHidden": false,
+			"isReadOnly": true,
+			"maxLength": 0
+		}
+	],
+	"lang": {
+		"widgetTitle": "Customized Hello world",
+		"widgetDescription": "Customized Hello sample widget"
+	},
+	"url": null,
+	"angularConfig": null
+}

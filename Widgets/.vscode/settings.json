@@ -1,0 +1,43 @@
+{
+	"json.schemas": [
+		{
+			"fileMatch": [
+				"/*.manifest"
+			],
+			"url": "./schema/manifest.schema.json"
+		}
+	],
+	"editor.rulers": [
+		120
+	],
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/*.js": {
+			"when": "$(basename).ts"
+		},
+		"**/*.js.map": {
+			"when": "$(basename)"
+		}
+	},
+	"editor.formatOnSave": true,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.tabSize": 3,
+	"typescript.tsdk": "../node_modules/typescript/lib",
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+	"files.associations": {
+		"widget.manifest": "json"
+	},
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": true,
+		"source.fixAll": true
+	},
+	// "tslint.configFile": "tslint.json"
+	"tslint.configFile": "tslint-strict.json"
+}

@@ -1,0 +1,16 @@
+{
+	"widgetId": "infor.sample.angular.dialogs",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Infor Sample Dialogs",
+	"version": "1.0",
+	"category": "utilities",
+	"moduleName": "widget",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Dialogs",
+			"widgetDescription": "Dialogs sample widget."
+		}
+	}
+}

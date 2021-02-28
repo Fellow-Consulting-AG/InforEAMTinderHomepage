@@ -1,0 +1,36 @@
+{
+	"widgetId": "infor.sample.angular.emptystate",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Empty State",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"settingsUI": "metadata",
+	"requiresConfig": true,
+	"emptyConfig": {
+		"icon": "no-budget",
+		"titleId": "emptyConfigTitle",
+		"descriptionId": "emptyConfigDescription",
+		"buttonId": "emptyConfigButton"
+	},
+	"settings": [
+		{
+			"name": "Message",
+			"type": "string",
+			"labelId": "message"
+		}
+	],
+	"localization": {
+		"en-US": {
+			"emptyConfigTitle": "Empty State Example",
+			"emptyConfigDescription": "Configure widget by clicking the button",
+			"emptyConfigButton": "Configure",
+			"widgetTitle": "Empty State",
+			"widgetDescription": "Empty State sample widget.",
+			"message": "Message"
+		}
+	}
+}

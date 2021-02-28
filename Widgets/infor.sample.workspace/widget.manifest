@@ -1,0 +1,28 @@
+{
+	"widgetId": "infor.sample.workspace",
+	"type": "inline",
+	"version": "1.0",
+	"name": "Workspace Sample",
+	"framework": "angular",
+	"aotVersion": "",
+	"targets": [
+		"default",
+		"mobile"
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Workspace Sample",
+			"widgetDescription": "Workspace sample widget",
+			"title": "Title",
+			"firstName": "First Name",
+			"lastName": "Last Name",
+			"email": "Email",
+			"editUser": "Edit User",
+			"userDetails": "User Details",
+			"launchToastTitle": "User Workspace Launch",
+			"launchToastMessage": "This is where you would launch the application",
+			"submitToastTitle": "User Edited",
+			"submitToastMessage": "The details of the user were changed."
+		}
+	}
+}

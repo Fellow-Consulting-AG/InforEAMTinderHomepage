@@ -1,0 +1,165 @@
+{
+	"$schema": "http://json.schemastore.org/tslint",
+	"extends": [
+		"./tslint.json"
+	],
+	"defaultSeverity": "error",
+	"rules": {
+		"cyclomatic-complexity": [
+			true,
+			10
+		],
+		"max-line-length": [
+			true,
+			{
+				"limit": 120,
+				"ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |// "
+			}
+		],
+		"no-unsafe-any": true,
+		"comment-format": {
+			"options": [
+				"check-space"
+			]
+		},
+		"indent": [
+			true,
+			"tabs"
+		],
+		"ban": {
+			"options": [
+				{
+					"name": [
+						"$",
+						"Deferred"
+					],
+					"message": "Use native Promise instead"
+				},
+				{
+					"name": [
+						"jQuery",
+						"Deferred"
+					],
+					"message": "Use native Promise instead"
+				},
+				{
+					"name": [
+						"$",
+						"ajax"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"jQuery",
+						"ajax"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"$",
+						"get"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"jQuery",
+						"get"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"$",
+						"getJSON"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"jQuery",
+						"getJSON"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"$",
+						"post"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"jQuery",
+						"post"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"XMLHttpRequest"
+					],
+					"message": "Ajax/XHR Should only be used in edge-cases. Preferrably use widgetContext.executeIonApi instead."
+				},
+				{
+					"name": [
+						"infor",
+						"companyon",
+						"client",
+						"sendMessage"
+					],
+					"message": "Use WidgetContext.send instead"
+				},
+				{
+					"name": [
+						"infor",
+						"companyon",
+						"client",
+						"registerMessageHandler"
+					],
+					"message": "Use WidgetContext.receive instead"
+				},
+				{
+					"name": [
+						"infor",
+						"companyon",
+						"client",
+						"unRegisterMessageHandler"
+					],
+					"message": "Use WidgetContext.send and WidgetContext.receive instead"
+				},
+				{
+					"name": [
+						"infor",
+						"companyon",
+						"client",
+						"sendPrepareDrillbackMessage"
+					],
+					"message": "Use WidgetContext.launch instead"
+				},
+				{
+					"name": [
+						"infor",
+						"companyon",
+						"client",
+						"sendPrepareFavoritesMessage"
+					],
+					"message": "Use WidgetContext.launch instead"
+				},
+				{
+					"name": [
+						"Soho",
+						"Locale",
+						"set"
+					],
+					"message": "Do not programmatically set locale. Modify path to lime/resources/en-US.js, or set devLanguage attribute in index.html instead."
+				}
+			],
+			"severity": "warning"
+		},
+		"no-console": true
+	}
+}

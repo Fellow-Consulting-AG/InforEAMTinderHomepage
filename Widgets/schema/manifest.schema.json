@@ -1,0 +1,366 @@
+{
+	"title": "Homepages Widget Manifest",
+	"type": "object",
+	"properties": {
+		"type": {
+			"type": "string",
+			"description": "The type of widget. The only supported types are inline and external. A hybrid widget should be defined as inline.",
+			"enum": [
+				"inline",
+				"external"
+			]
+		},
+		"version": {
+			"type": "string",
+			"description": "The widget version number. The version number should consist of a minimum of two and a maximum of four positive integers separated by dots. Example: 1.10.4",
+			"pattern": "^(\\d+\\.)?(\\d+\\.)?\\d+\\.\\d+$",
+			"minLength": 3,
+			"maxLength": 32
+		},
+		"name": {
+			"type": "string",
+			"maxLength": 64
+		},
+		"localization": {
+			"type": "object",
+			"patternProperties": {
+				"af-ZA|ar-SA|bg-BG|cs-CZ|da-DK|de-DE|el-GR|en-GB|en-US|es-AR|es-ES|et-EE|fi-FI|fr-CA|fr-FR|he-IL|hi-IN|hu-HU|it-IT|ja-JP|ko-KR|lt-LT|lv-LV|nb-NO|nl-NL|pl-PL|pt-BR|pt-PT|ro-RO|ru-RU|sk-SK|sl-SI|sv-SE|th-TH|tr-TR|uk-UA|vi-VN|zh-CN|zh-TW": {
+					"type": "object",
+					"properties": {
+						"widgetTitle": {
+							"type": "string",
+							"maxLength": 40
+						},
+						"widgetDescription": {
+							"type": "string",
+							"maxLength": 1024
+						}
+					},
+					"additionalProperties": true,
+					"required": [
+						"widgetTitle",
+						"widgetDescription"
+					]
+				}
+			},
+			"additionalProperties": false
+		},
+		"title": {
+			"type": "string",
+			"maxLength": 40
+		},
+		"description": {
+			"type": "string",
+			"maxLength": 1024
+		},
+		"moduleName": {
+			"type": "string",
+			"default": "widget"
+		},
+		"url": {
+			"type": "string"
+		},
+		"framework": {
+			"type": "string",
+			"enum": [
+				"angular",
+				"jquery",
+				"angularjs"
+			]
+		},
+		"displayVersion": {
+			"type": "string"
+		},
+		"category": {
+			"type": "string",
+			"enum": [
+				"application",
+				"businessintelligence",
+				"businessprocess",
+				"social",
+				"utilities",
+				"statisticsusage"
+			]
+		},
+		"applicationLogicalId": {
+			"type": "string",
+			"pattern": "lid://.+"
+		},
+		"applicationVersion": {
+			"type": "string"
+		},
+		"sharedModules": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"path": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				]
+			}
+		},
+		"helpUrl": {
+			"type": "string"
+		},
+		"screenshots": {
+			"type": "number",
+			"minimum": 1,
+			"maximum": 3,
+			"description": "Number of screenshots"
+		},
+		"settings": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"boolean",
+							"object",
+							"number",
+							"radio",
+							"selector",
+							"string"
+						],
+						"default": "string"
+					},
+					"defaultValue": {},
+					"labelId": {
+						"type": "string"
+					},
+					"isHidden": {
+						"type": "boolean",
+						"default": false
+					},
+					"maxLength": {
+						"type": "number"
+					},
+					"values": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"value": {},
+								"text": {
+									"type": "string"
+								},
+								"textId": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"isEnabledWhenPublished": {
+						"type": "boolean",
+						"default": true
+					}
+				},
+				"required": [
+					"name"
+				]
+			}
+		},
+		"defaultSize": {
+			"type": "string",
+			"pattern": "^[1-4](,[1-2])?$"
+		},
+		"enablePublish": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableSettingsWhenPublished": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableTitleEdit": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableSettings": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableApplicationSelector": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableCatalog": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableCustomProperties": {
+			"type": "boolean",
+			"default": false
+		},
+		"emptyConfig": {
+			"type": "object",
+			"minProperties": 1,
+			"description": "NOTE: this property should only be used when requiresConfig is set to true",
+			"properties": {
+				"icon": {
+					"type": "string",
+					"enum": [
+						"generic",
+						"error-loading",
+						"new-project",
+						"no-alerts",
+						"no-analytics",
+						"no-budget",
+						"no-data",
+						"no-events",
+						"no-notes",
+						"no-orders",
+						"no-tasks"
+					],
+					"default": "error-loading"
+				},
+				"titleId": {
+					"type": "string"
+				},
+				"descriptionId": {
+					"type": "string"
+				},
+				"buttonId": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false
+		},
+		"iconFile": {
+			"type": "string",
+			"pattern": "^.+\\.png$",
+			"default": "icon.png"
+		},
+		"maxSize": {
+			"type": "string",
+			"pattern": "^[1-4](,[1-2])?$"
+		},
+		"requiresConfig": {
+			"type": "boolean",
+			"default": false
+		},
+		"target": {
+			"type": "string",
+			"enum": [
+				"banner",
+				"mobile",
+				"default"
+			]
+		},
+		"targets": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": [
+					"banner",
+					"mobile",
+					"default"
+				]
+			}
+		},
+		"isEarlyAccess": {
+			"type": "boolean"
+		},
+		"earlyAccessInfo": {
+			"type": "string",
+			"maxLength": 1024
+		}
+	},
+	"required": [
+		"widgetId",
+		"type",
+		"version",
+		"name"
+	],
+	"allOf": [
+		{
+			"if": {
+				"properties": {
+					"type": {
+						"enum": [
+							"inline"
+						]
+					}
+				}
+			},
+			"then": {
+				"required": [
+					"framework"
+				]
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"emptyConfig": {
+						"minProperties": 1
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"requiresConfig": {
+						"const": true
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"properties": {
+					"widgetId": {
+						"enum": [
+							"infor.bestpractices-bi.bi-widget",
+							"infor.bi.cpqeq-bi",
+							"infor.bi.fsm-bi",
+							"infor.bi.m3aeqptp-bi",
+							"infor.bi.ss.fsm-bi",
+							"infor.bi-ss.cpqeq-bi",
+							"infor.cloudsuite-bi-sl_dashboard.widget",
+							"infor.cloudsuite-bi-ss.widget",
+							"infor.crm.opportunityList",
+							"infor.ion.connect-by-connection-point",
+							"infor.ion.connect-by-document-type",
+							"infor.ion.insight-hybrid",
+							"infor.ion.insight-live",
+							"infor.ion.process-by-workflow",
+							"infor.m3aeqptp-bi.widget",
+							"infor.m3aeqptp-bi.widget-ss",
+							"infor.self-service-bi.bi-widget",
+							"infor.sxe.CustomerLookup",
+							"infor.Sxe.CustomerPeriodBalance",
+							"infor.sxe.CustomerUSPS"
+						]
+					}
+				}
+			},
+			"then": {
+				"properties": {
+					"widgetId": {
+						"type": "string"
+					}
+				}
+			},
+			"else": {
+				"properties": {
+					"widgetId": {
+						"type": "string",
+						"pattern": "^[a-z0-9\\.]+$",
+						"maxLength": 64
+					}
+				}
+			}
+		}
+	]
+}

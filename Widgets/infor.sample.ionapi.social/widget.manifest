@@ -1,0 +1,19 @@
+{
+	"widgetId": "infor.sample.ionapi.social",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "ION API Social Sample",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.social",
+	"moduleName": "widget",
+	"enableIonApi": true,
+	"localization": {
+		"en-US": {
+			"widgetTitle": "ION API Social Sample",
+			"widgetDescription": "Displays the name, email and profile photo for the current user.",
+			"loadError": "Unable to load."
+		}
+	}
+}

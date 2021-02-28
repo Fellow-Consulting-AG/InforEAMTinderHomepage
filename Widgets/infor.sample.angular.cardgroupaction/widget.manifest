@@ -1,0 +1,18 @@
+{
+	"widgetId": "infor.sample.angular.cardgroupaction",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Infor Sample Card Group Action",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"enableTitleEdit": false,
+	"moduleName": "widget",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "List with fixed toolbar",
+			"widgetDescription": "Implements a fixed toolbar that is suitable to show above lists etc."
+		}
+	}
+}

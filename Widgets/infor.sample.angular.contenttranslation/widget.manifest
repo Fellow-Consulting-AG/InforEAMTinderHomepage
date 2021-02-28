@@ -1,0 +1,21 @@
+{
+	"widgetId": "infor.sample.angular.contenttranslation",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Infor Sample Content Translation",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Content Translation",
+			"widgetDescription": "Content Translation sample widget.",
+			"add": "Add",
+			"editItem": "Edit item",
+			"title": "Title",
+			"description": "Description"
+		}
+	}
+}

@@ -1,0 +1,50 @@
+﻿{
+	"ionApiUrl": "http://localhost:8083/tenantname",
+	"ionApiToken": "bh6fKuLUu0MnE7Mzir5jNwoQTTmZ",
+	"ionApiCustomerContext": "CustomerApi",
+	"tenant": "",
+	"applications": {
+		"lid://infor.bi": [
+			{
+				"logicalIdPrefix": "lid://infor.bi",
+				"logicalId": "lid://infor.bi.1",
+				"hostname": "biserver",
+				"port": "8081",
+				"context": "test",
+				"useHttps": "true"
+			}
+		],
+		"lid://infor.test.sample": [
+			{
+				"isDefault": "true",
+				"logicalIdPrefix": "lid://infor.test.sample",
+				"logicalId": "lid://infor.test.sample.1",
+				"hostname": "testserver",
+				"port": "8082",
+				"context": "test",
+				"useHttps": "true"
+			},
+			{
+				"logicalIdPrefix": "lid://infor.test.sample",
+				"logicalId": "lid://infor.test.sample.2",
+				"hostname": "testserver2",
+				"port": "8083",
+				"context": "test",
+				"useHttps": "true"
+			}
+		],
+		"lid://infor.externalapp": [
+			{
+				"logicalIdPrefix": "lid://infor.externalapp",
+				"logicalId": "lid://infor.externalapp.1",
+				"hostname": "example.com",
+				"port": "",
+				"context": "test",
+				"useHttps": "true"
+			}
+		]
+	},
+	"properties": {
+		"project": "Customer"
+	}
+}

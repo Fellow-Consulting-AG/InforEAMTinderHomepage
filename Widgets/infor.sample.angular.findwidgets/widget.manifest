@@ -1,0 +1,28 @@
+{
+	"widgetId": "infor.sample.angular.findwidgets",
+	"type": "inline",
+	"name": "Find Widgets",
+	"version": "1.0",
+	"category": "application",
+	"framework": "angular",
+	"applicationLogicalId": "lid://infor.homepages",
+	"aotVersion": "",
+	"settingsUI": "metadata",
+	"settings": [
+		{
+			"name": "IncludeSelf",
+			"type": "boolean",
+			"defaultValue": false,
+			"labelId": "includeSelf"
+		}
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Find Widgets - Sample",
+			"widgetDescription": "Find Widgets sample widget.",
+			"includeSelf": "Include self in result",
+			"searchWidgetTitle": "Search for widget",
+			"searchWidgetText": "Search for a widget with ID"
+		}
+	}
+}

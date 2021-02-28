@@ -1,0 +1,26 @@
+{
+	"widgetId": "infor.sample.angular.quicknote",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Infor Sample QuickNote",
+	"version": "1.0",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"settings": [
+		{
+			"name": "notes",
+			"isHidden": true,
+			"defaultValue": []
+		}
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Quicknote Sample",
+			"widgetDescription": "Quicknote sample widget.",
+			"add": "Add",
+			"clear": "Clear"
+		}
+	}
+}

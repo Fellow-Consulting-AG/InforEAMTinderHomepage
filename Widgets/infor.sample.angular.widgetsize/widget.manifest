@@ -1,0 +1,17 @@
+{
+	"widgetId": "infor.sample.angular.widgetsize",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"defaultSize": "4,2",
+	"name": "Widget size",
+	"version": "1.0",
+	"category": "utilities",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Widget Size",
+			"widgetDescription": "Uses the getSize API for retrieving the current widget size in runtime.",
+			"infoMsg": "Change the widget size (Edit button) or resize your browser window to see the size update."
+		}
+	}
+}
