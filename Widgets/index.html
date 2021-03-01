@@ -7,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 	<title>Homepages</title>
 	<link href="scripts/xi/light-theme.css" rel="stylesheet" id="sohoxi-stylesheet" />
+	<link href="scripts/lightslider/lightslider.min.css" rel="stylesheet" id="lightslider" />
 	<link rel="stylesheet" href="scripts/lime/lime-light-theme.css" type="text/css" />
 	<!-- <link href="scripts/xi/dark-theme.css" rel="stylesheet" id="sohoxi-stylesheet" />
 	<link rel="stylesheet" href="scripts/lime/lime-dark-theme.css" type="text/css" /> -->
@@ -24,10 +25,12 @@
 	<script src="scripts/vendor/zone.min.js"></script>
 	<script src="scripts/vendor/system.js"></script>
 	<script src="scripts/vendor/tslib.js"></script>
+	<script src="scripts/lightslider/lightslider.min.js"></script>
 	<script src="lime-main.js"></script>
 	<script src="lime-lazy.js"></script>
 	<script src="lime-config.js"></script>
 	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBDloS5dJ5-O9akmQ3TWcepxtSItwPWqSQ"></script>
+<!--	<link rel="stylesheeet" href="css/theme-new-light.min.css" />-->
 </head>
 
 <body class="no-scroll">
@@ -129,6 +132,8 @@
 		System.import("main").then(function (main) {
 			main.bootstrap();
 		});
+		$('body').initialize();
+		window.$ = $;
 	</script>
 
 </body>

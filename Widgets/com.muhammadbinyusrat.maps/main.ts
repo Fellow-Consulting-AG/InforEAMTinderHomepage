@@ -8,9 +8,13 @@ import {assets} from './assets';
 @Component({
     template: `
         <div class="main-container">
+
+            <!-- First Box (map)           -->
             <div>
                 <div #map style="width:100%;height:300px"></div>
             </div>
+
+            <!-- Second Box (Grid)        -->
             <div>
                 <div class="table-grid">
                     <div class="heading-row"></div>
@@ -23,14 +27,46 @@ import {assets} from './assets';
                     </ng-container>
                 </div>
             </div>
-            <div>third box</div>
+
+            <!--  Third Box (Slider)    -->
+            <div>
+                <ul id="lightSlider" style="max-width: 500px">
+                    <li data-thumb="/com.muhammadbinyusrat.maps/images/industr.jpeg">
+                        <img src="/com.muhammadbinyusrat.maps/images/industry.jpeg"/>
+                    </li>
+                    <li data-thumb="/com.muhammadbinyusrat.maps/images/some-industry-image.jpg">
+                        <img src="/com.muhammadbinyusrat.maps/images/some-industry-image.jpg"/>
+                    </li>
+                    <li data-thumb="/com.muhammadbinyusrat.maps/images/5f17ad65171f3.jpg">
+                        <img src="/com.muhammadbinyusrat.maps/images/5f17ad65171f3.jpg"/>
+                    </li>
+                </ul>
+                <div class="controls">
+                    <div style="padding: 2px;">
+                        <img [src]="assets.noIcon" width="25"/>
+                    </div>
+                    <div style="display: flex; justify-content: center">
+                        <div>
+                            <img src="/com.muhammadbinyusrat.maps/images/left_double.png" class="navigation-icon"/>
+                            <img src="/com.muhammadbinyusrat.maps/images/left.png" class="navigation-icon"/>
+                            <span class="slide-numbers">1 of 3</span>
+                            <img src="/com.muhammadbinyusrat.maps/images/right.png" class="navigation-icon"/>
+                            <img src="/com.muhammadbinyusrat.maps/images/right_double.png" class="navigation-icon"/>
+                        </div>
+                    </div>
+                    <div style="padding-left: 15px; padding-top: 2px;">
+                        <img [src]="assets.checkIcon" width="25"/>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Fourth Box  (Form)      -->
             <div>
                 <div class="form-outline">
                     <div class="field">
                         <input type="text" id="first-name" name="first-name" placeholder="Title">
                     </div>
-
-
                     <div class="field">
                         <textarea id="description" class="resizable" name="description"
                                   placeholder="Short Description"></textarea>
@@ -44,8 +80,8 @@ import {assets} from './assets';
                     <div style="display:grid; grid-template-columns: 0.7fr 0.3fr;">
                         <div>
                             <div class="field">
-                                <select id="states" name="states">
-                                    <option value="AL">Assigned To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                                <select id="states" name="states" class="dropdown">
+                                    <option value="AL">Assign To:</option>
                                     <option value="CA">California</option>
                                     <option value="DE">Delaware</option>
                                     <option value="NY">New York</option>
@@ -57,8 +93,6 @@ import {assets} from './assets';
                             <button class="btn-primary" type="button" id="page-button-primary">Send</button>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -96,6 +130,29 @@ import {assets} from './assets';
             border-radius: 15px;
             padding: 10px;
         }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 0.1fr 1fr 0.1fr;
+            background-color: #f0f0f098;
+            width: 100%;
+            border-radius: 10px;
+            height: 30px;
+            position: relative;
+            border: 1px solid;
+            bottom: 40px;
+        }
+
+        .navigation-icon {
+            cursor: pointer;
+            height: 25px;
+        }
+
+        .slide-numbers {
+            font-size: 16px;
+            position: relative;
+            top: -7px;
+        }
     `]
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -105,6 +162,7 @@ export class CardListComponent implements OnInit, IWidgetComponent {
     @ViewChild("map", {static: true}) mapElement: any;
     map: google.maps.Map;
     gridData: any;
+    assets = assets;
 
     sliderImageObject: Array<object> = [{
         image: 'assets/img/slider/1.jpg',
@@ -138,7 +196,17 @@ export class CardListComponent implements OnInit, IWidgetComponent {
             {icon: assets.noIcon, coordinates: '76.4534534, 34.09435435', data: '23423423'},
             {icon: assets.checkIcon, coordinates: '76.4534534, 34.09435435', data: '23423423'},
             {icon: assets.checkIcon, coordinates: '76.4534534, 34.09435435', data: '23423423'},
-        ]
+        ];
+
+        // ** INITIALIZE JQUERY PLUGINS
+        // @ts-ignore
+        window.$('.dropdown').dropdown();
+        // @ts-ignore
+        window.$("#lightSlider").lightSlider({
+            controls: false,
+            item: 1,
+            pager: false,
+        });
     }
 
     private updateSortOrder() {
