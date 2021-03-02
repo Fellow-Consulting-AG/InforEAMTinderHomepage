@@ -1,3 +1,4 @@
+/// <reference types="@types/googlemaps" />
 import {CommonModule} from "@angular/common";
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgModule, OnInit, ViewChild} from "@angular/core";
 import {SohoListViewModule} from "@infor/sohoxi-angular";
