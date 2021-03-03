@@ -1,0 +1,21 @@
+{
+	"widgetId": "de.fellow.EAMTinderApp",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "Maps",
+	"version": "1.0",
+	"defaultSize": "3,2",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Maps",
+			"widgetDescription": "Maps widget for Infor Homepages",
+			"order": "Order",
+			"ascending": "Ascending",
+			"descending": "Descending"
+		}
+	}
+}
