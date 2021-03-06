@@ -7,7 +7,7 @@ exports.widgetFactory = function (context) {
     return {
         angularConfig: {
             moduleFactory: main_ngfactory_1.CardListModuleNgFactory,
-            componentType: main_1.CardListComponent
+            componentType: main_1.MapComponent
         }
     };
 };

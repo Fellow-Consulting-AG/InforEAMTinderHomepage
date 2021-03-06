@@ -4,7 +4,7 @@
 	"framework": "angular",
 	"aotVersion": "",
 	"name": "Maps",
-	"version": "1.0",
+	"version": "1.0.1",
 	"defaultSize": "3,2",
 	"category": "application",
 	"applicationLogicalId": "lid://infor.homepages",

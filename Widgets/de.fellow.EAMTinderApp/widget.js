@@ -6,7 +6,7 @@ define(["require", "exports", "./main"], function (require, exports, main_1) {
         return {
             angularConfig: {
                 moduleType: main_1.CardListModule,
-                componentType: main_1.CardListComponent
+                componentType: main_1.MapComponent
             }
         };
     };
