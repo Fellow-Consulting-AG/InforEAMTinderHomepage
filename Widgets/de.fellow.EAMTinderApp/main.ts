@@ -280,7 +280,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
     injectGoogleMapsScript() {
         let node = document.createElement('script'); // creates the script tag
-        node.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCs6jupPVulXGaxgb4Cer3oPtCIS2VPC68'; // sets the source (insert url in between quotes)
+        node.src = 'https://maps.googleapis.com/maps/api/js?key=&'; // sets the source (insert url in between quotes)
         node.type = 'text/javascript'; // set the script type
         function gmapsLoaded() {
             this.googleMapsLibraryLoaded();
