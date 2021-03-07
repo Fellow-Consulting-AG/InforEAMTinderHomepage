@@ -1,10 +1,10 @@
 import { IWidgetContext, IWidgetInstance } from "lime";
-import { MapComponent, CardListModule } from "./main";
+import { MapComponent, MapsModule } from "./main";
 
 export const widgetFactory = (context: IWidgetContext): IWidgetInstance => {
 	return {
 		angularConfig: {
-			moduleType: CardListModule,
+			moduleType: MapsModule,
 			componentType: MapComponent
 		}
 	};

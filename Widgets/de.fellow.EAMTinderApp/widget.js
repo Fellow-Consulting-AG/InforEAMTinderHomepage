@@ -5,7 +5,7 @@ define(["require", "exports", "./main"], function (require, exports, main_1) {
     exports.widgetFactory = function (context) {
         return {
             angularConfig: {
-                moduleType: main_1.CardListModule,
+                moduleType: main_1.MapsModule,
                 componentType: main_1.MapComponent
             }
         };

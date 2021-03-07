@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi-angular", "lime", "./assets", "@angular/forms", "rxjs/operators"], function (require, exports, common_1, core_1, sohoxi_angular_1, lime_1, assets_1, forms_1, operators_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CardListModule = exports.MapComponent = void 0;
+    exports.MapsModule = exports.MapComponent = void 0;
     var MapComponent = /** @class */ (function () {
         function MapComponent(changeDetectionRef, fb) {
             this.changeDetectionRef = changeDetectionRef;
@@ -70,9 +70,9 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
             // ** INITIALIZE JQUERY PLUGINS
             try {
                 // @ts-ignore
-                window.$('.dropdown').dropdown();
+                $('.dropdown').dropdown();
                 // @ts-ignore
-                window.$("#lightSlider").lightSlider({
+                $("#lightSlider").lightSlider({
                     controls: false,
                     item: 1,
                     pager: false,
@@ -150,18 +150,18 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
         return MapComponent;
     }());
     exports.MapComponent = MapComponent;
-    var CardListModule = /** @class */ (function () {
-        function CardListModule() {
+    var MapsModule = /** @class */ (function () {
+        function MapsModule() {
         }
-        CardListModule = __decorate([
+        MapsModule = __decorate([
             core_1.NgModule({
                 imports: [common_1.CommonModule, sohoxi_angular_1.SohoListViewModule, forms_1.ReactiveFormsModule, forms_1.FormsModule],
                 declarations: [MapComponent],
                 entryComponents: [MapComponent]
             })
-        ], CardListModule);
-        return CardListModule;
+        ], MapsModule);
+        return MapsModule;
     }());
-    exports.CardListModule = CardListModule;
+    exports.MapsModule = MapsModule;
 });
 //# sourceMappingURL=main.js.map

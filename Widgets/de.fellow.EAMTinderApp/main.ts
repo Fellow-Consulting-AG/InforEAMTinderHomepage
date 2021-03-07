@@ -215,7 +215,6 @@ export class MapComponent implements OnInit, IWidgetComponent {
         ];
         this.gridDataFiltered = this.gridData.slice();
 
-
         this.gridReactiveForm = this.fb.group({
             locationFilter: '',
             dateFilter: ''
@@ -248,9 +247,9 @@ export class MapComponent implements OnInit, IWidgetComponent {
         // ** INITIALIZE JQUERY PLUGINS
         try {
             // @ts-ignore
-            window.$('.dropdown').dropdown();
+            $('.dropdown').dropdown();
             // @ts-ignore
-            window.$("#lightSlider").lightSlider({
+            $("#lightSlider").lightSlider({
                 controls: false,
                 item: 1,
                 pager: false,
@@ -280,7 +279,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
     injectGoogleMapsScript() {
         let node = document.createElement('script'); // creates the script tag
-        node.src = 'https://maps.googleapis.com/maps/api/js?key=&'; // sets the source (insert url in between quotes)
+        node.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCs6jupPVulXGaxgb4Cer3oPtCIS2VPC68'; // sets the source (insert url in between quotes)
         node.type = 'text/javascript'; // set the script type
         function gmapsLoaded() {
             this.googleMapsLibraryLoaded();
@@ -316,5 +315,5 @@ export class MapComponent implements OnInit, IWidgetComponent {
     declarations: [MapComponent],
     entryComponents: [MapComponent]
 })
-export class CardListModule {
+export class MapsModule {
 }
