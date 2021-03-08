@@ -6,7 +6,7 @@ var main_ngfactory_1 = require("./main.ngfactory");
 exports.widgetFactory = function (context) {
     return {
         angularConfig: {
-            moduleFactory: main_ngfactory_1.CardListModuleNgFactory,
+            moduleFactory: main_ngfactory_1.MapsModuleNgFactory,
             componentType: main_1.MapComponent
         }
     };
