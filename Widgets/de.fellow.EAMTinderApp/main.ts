@@ -6,7 +6,15 @@ import {} from "googlemaps";
 import {IWidgetComponent, IWidgetContext, IWidgetInstance, IWidgetSettingMetadata, WidgetSettingsType} from "lime";
 import {assets} from './assets';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {filter} from "rxjs/operators";
+import {filter, take} from "rxjs/operators";
+import {HttpClientModule} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
+
+interface SliderImage {
+    src: string;
+
+    [key: string]: any;
+}
 
 @Component({
     template: `
@@ -37,34 +45,38 @@ import {filter} from "rxjs/operators";
 
             <!--  Third Box (Slider)    -->
             <div>
-                <ul id="lightSlider" style="max-width: 500px">
-                    <li>
-                        <img src="{{assets.industry1}}"/>
-                    </li>
-                    <li data-thumb="some-industry-image.jpg">
-                        <img src="some-industry-image.jpg"/>
-                    </li>
-                    <li data-thumb="5f17ad65171f3.jpg">
-                        <img src="5f17ad65171f3.jpg"/>
-                    </li>
-                </ul>
-                <div class="controls">
-                    <div style="padding: 2px;">
-                        <img [src]="assets.noIcon" width="25"/>
-                    </div>
-                    <div style="display: flex; justify-content: center">
-                        <div>
-                            <img src="{{assets.doubleArrowLeft}}" class="navigation-icon"/>
-                            <img src="{{assets.arrowLeft}}" class="navigation-icon"/>
-                            <span class="slide-numbers">1 of 3</span>
-                            <img src="{{assets.rightArrow}}" class="navigation-icon"/>
-                            <img src="{{assets.doubleArrowRight}}" class="navigation-icon"/>
+                <ng-container *ngIf="sliderImages">
+
+                    <div class="slider-container">
+                        <div class="imageSlider" [ngStyle]="{'left':'-' + currentSliderImage * 550+'px'}">
+                            <div *ngFor="let sliderImage of sliderImages;"
+                                 [ngStyle]="{'background-image': 'url(' + sliderImage.src+ ')'}"
+                                 style="background-size:cover;height:400px;width:550px;">
+                                <img [src]="sliderImage.src" (error)="invalidateImage(sliderImage);">
+                            </div>
                         </div>
                     </div>
-                    <div style="padding-left: 15px; padding-top: 2px;">
-                        <img [src]="assets.checkIcon" width="25"/>
+
+                    <div class="controls">
+                        <div style="padding: 2px;">
+                            <img [src]="assets.noIcon" width="25"/>
+                        </div>
+                        <div style="display: flex; justify-content: center">
+                            <div>
+                                <img src="{{assets.doubleArrowLeft}}" class="navigation-icon" (click)="slideToFirst()"/>
+                                <img src="{{assets.arrowLeft}}" class="navigation-icon"
+                                     (click)="slideToPreviousImage()"/>
+                                <span class="slide-numbers">{{currentSliderImage + 1}} of {{sliderImages.length}}</span>
+                                <img src="{{assets.rightArrow}}" class="navigation-icon" (click)="slideToNextImage()"/>
+                                <img src="{{assets.doubleArrowRight}}" class="navigation-icon" (click)="slideToLast()"/>
+                            </div>
+                        </div>
+                        <div style="padding-left: 15px; padding-top: 2px;">
+                            <img [src]="assets.checkIcon" width="25"/>
+                        </div>
                     </div>
-                </div>
+                </ng-container>
+
             </div>
 
 
@@ -170,6 +182,21 @@ import {filter} from "rxjs/operators";
             position: relative;
             top: -7px;
         }
+
+        .slider-container {
+            width: 550px;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .imageSlider {
+            position: relative;
+            transition-property: left;
+            transition-duration: 0.5s;
+            transition-timing-function: ease-in-out;
+            display: grid;
+            grid-template-columns: repeat(15, 550px);
+        }
     `]
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -177,26 +204,18 @@ export class MapComponent implements OnInit, IWidgetComponent {
     @Input() widgetContext: IWidgetContext;
     @Input() widgetInstance: IWidgetInstance;
     @ViewChild("map", {static: true}) mapElement: any;
+    @ViewChild("imageSlider", {static: true}) imageSlider: any;
+    sliderElement: HTMLElement;
     map: google.maps.Map;
     gridData: any;
     gridDataFiltered: any;
     assets = assets;
     gridReactiveForm: FormGroup;
 
-    sliderImageObject: Array<object> = [{
-        image: 'assets/img/slider/1.jpg',
-        thumbImage: 'assets/img/slider/1_min.jpeg',
-        alt: 'alt of image',
-        title: 'title of image'
-    }, {
-        image: '.../iOe/xHHf4nf8AE75h3j1x64ZmZ//Z==', // Support base64 image
-        thumbImage: '.../iOe/xHHf4nf8AE75h3j1x64ZmZ//Z==', // Support base64 image
-        title: 'Image title', //Optional: You can use this key if want to show image with title
-        alt: 'Image alt' //Optional: You can use this key if want to show image with alt
-    }
-    ];
+    sliderImages: SliderImage[];
+    currentSliderImage = 0;
 
-    constructor(private readonly changeDetectionRef: ChangeDetectorRef, private fb: FormBuilder) {
+    constructor(private readonly changeDetectionRef: ChangeDetectorRef, private fb: FormBuilder, private http: HttpClient) {
     }
 
 
@@ -222,7 +241,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
 
         this.gridReactiveForm.get('locationFilter').valueChanges.pipe(filter((value) => {
-            if(value === ''){
+            if (value === '') {
                 this.resetGridFilter();
                 return false;
             }
@@ -233,7 +252,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
         });
 
         this.gridReactiveForm.get('dateFilter').valueChanges.pipe(filter((value) => {
-            if(value === ''){
+            if (value === '') {
                 this.resetGridFilter();
                 return false;
             }
@@ -249,16 +268,75 @@ export class MapComponent implements OnInit, IWidgetComponent {
             // @ts-ignore
             $('.dropdown').dropdown();
             // @ts-ignore
-            $("#lightSlider").lightSlider({
-                controls: false,
-                item: 1,
-                pager: false,
-            });
         } catch (err) {
             console.log('Error initialzing JQuery components.');
             console.warn(err);
         }
+
+        // this.sliderImages = [
+        //     {src: 'https://picsum.photos/550/401'},
+        //     {src: 'https://picsum.photos/550/402'},
+        //     {src: 'https://picsum.photos/550/403'},
+        //     {src: 'https://picsum.photos/550/399'},
+        //     {src: 'https://picsum.photos/550/398'},
+        //     {src: 'https://picsum.photos/550/397'}
+        // ];
+        // setInterval(() => {
+        //     console.log('Scroll position should now be changed.');
+        //     this.imageSlider.nativeElement.scrollLeft = 550;
+        // }, 4000);
+        this.http.get('https://run.mocky.io/v3/5c3199e0-823f-4d88-b67a-407a33c30af3').pipe(take(1)).subscribe((apiResponse: any) => {
+            // console.clear();
+            console.log('---------------------------------------------------');
+            const newSliderImagesObject = apiResponse.items.item.map((item: any) => {
+                return {
+                    src: item.resrs.res[1].url
+                }
+                // return item.resrs.res[1].url;
+                // console.log(item.resrs.res[1].url);
+            });
+
+            this.sliderImages = newSliderImagesObject;
+            console.log(this.sliderImages);
+            // console.log(apiResponse?.items.item);
+        });
+
         this.changeDetectionRef.markForCheck();
+    }
+
+    slideToFirst() {
+        this.currentSliderImage = 0;
+        this.calibrateSlider();
+    }
+
+    slideToLast() {
+        this.currentSliderImage = this.sliderImages.length - 1;
+        this.calibrateSlider();
+    }
+
+    slideToNextImage() {
+        if (this.currentSliderImage < this.sliderImages.length - 1) {
+            this.currentSliderImage++;
+            this.calibrateSlider();
+        }
+    }
+
+    slideToPreviousImage() {
+        if (this.currentSliderImage > 0) {
+            this.currentSliderImage--;
+            this.calibrateSlider();
+        }
+    }
+
+    calibrateSlider() {
+        // console.log(this.currentSliderImage);
+        // console.log(this.imageSlider.nativeElement.scrollLeft);
+        // console.log(this.sliderElement.scrollLeft);
+        // this.sliderElement.scrollLeft = this.currentSliderImage * 550;
+        // this.sliderElement.scrollLeft = (this.currentSliderImage -1) * 550
+        // const targetChild = document.getElementById('slider_image_' + this.currentSliderImage);
+        // console.log(targetChild.offsetLeft);
+        // this.sliderElement.scrollLeft += 560;
     }
 
 
@@ -266,7 +344,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
         console.log('Plugin should be loaded by now.');
         try {
             const mapProperties = {
-                center: new google.maps.LatLng(35.2271, -80.8431),
+                center: new google.maps.LatLng(53.551086, 9.993682),
                 zoom: 15,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
@@ -277,9 +355,10 @@ export class MapComponent implements OnInit, IWidgetComponent {
         }
     }
 
+
     injectGoogleMapsScript() {
         let node = document.createElement('script'); // creates the script tag
-        node.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCs6jupPVulXGaxgb4Cer3oPtCIS2VPC68'; // sets the source (insert url in between quotes)
+        node.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAF2LWQraFh6vs8rKvc5fjkCZyzaKQkmE8'; // sets the source (insert url in between quotes)
         node.type = 'text/javascript'; // set the script type
         function gmapsLoaded() {
             this.googleMapsLibraryLoaded();
@@ -308,10 +387,15 @@ export class MapComponent implements OnInit, IWidgetComponent {
             ]
         }];
     }
+
+    invalidateImage(sliderImage: SliderImage) {
+        sliderImage.src= assets.error;
+        console.error('Error loading: ', sliderImage.src);
+    }
 }
 
 @NgModule({
-    imports: [CommonModule, SohoListViewModule, ReactiveFormsModule, FormsModule],
+    imports: [CommonModule, SohoListViewModule, ReactiveFormsModule, FormsModule, HttpClientModule],
     declarations: [MapComponent],
     entryComponents: [MapComponent]
 })

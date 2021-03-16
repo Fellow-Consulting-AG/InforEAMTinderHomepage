@@ -5,6 +5,7 @@
 	"aotVersion": "",
 	"name": "Maps",
 	"version": "1.0.1",
+	"enablePublish": true,
 	"defaultSize": "3,2",
 	"category": "application",
 	"applicationLogicalId": "lid://infor.homepages",
