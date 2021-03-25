@@ -1,0 +1,23 @@
+{
+	"widgetId": "tenant.de.fellow.EAMTinderApp",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "EAM Tinder App",
+	"version": "1.0.1",
+	"enablePublish": true,
+	"defaultSize": "3,2",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"author": "Fellow Consulting",
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Maps",
+			"widgetDescription": "Maps widget for Infor Homepages",
+			"order": "Order",
+			"ascending": "Ascending",
+			"descending": "Descending"
+		}
+	}
+}
