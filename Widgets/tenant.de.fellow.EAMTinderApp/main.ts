@@ -7,8 +7,9 @@ import {IWidgetComponent, IWidgetContext, IWidgetInstance, IWidgetSettingMetadat
 import {assets} from './assets';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {filter, take} from "rxjs/operators";
-import {HttpClientModule} from "@angular/common/http";
+import {HttpClientModule, HttpHeaders} from "@angular/common/http";
 import {HttpClient} from "@angular/common/http";
+import {createNgCompilerOptions} from "@angular/compiler-cli";
 
 interface SliderImage {
     src: string;
@@ -30,9 +31,9 @@ interface SliderImage {
                 <form [formGroup]="gridReactiveForm">
                     <div class="table-grid">
                         <div class="heading-row"></div>
-                        <div class="heading-row">Location <input type="text" formControlName="locationFilter"
-                                                                 class="grid-filter-input"></div>
-                        <div class="heading-row">Data<input type="text" formControlName="dateFilter"
+                        <div class="heading-row">LOCATION<input type="text" formControlName="locationFilter"
+                                                                           class="grid-filter-input"></div>
+                        <div class="heading-row">DATA<input type="text" formControlName="dateFilter"
                                                             class="grid-filter-input"></div>
                         <ng-container *ngFor="let gridRow of gridDataFiltered">
                             <div style="padding:3px"><img [src]="gridRow.icon"></div>
@@ -126,7 +127,7 @@ interface SliderImage {
         }
 
         .heading-row {
-            background: #50535c;
+            background: #c3c3c3;
             color: white;
             height: 4.5rem;
         }
@@ -135,7 +136,8 @@ interface SliderImage {
             height: 1.5rem;
             color: white;
             width: 20rem;
-            border: 1px solid gray;
+            background-color: white;
+            border: 0px;
             font-size: 11px;
             padding-left: 0px;
             margin-top: 2px;
@@ -143,14 +145,16 @@ interface SliderImage {
 
         .table-grid {
             display: grid;
-            border: 1px solid;
+            border: 1px solid #cdcdcd;
             grid-template-columns: 0.1fr 0.9fr 0.9fr;
+            border-radius: 15px;
+            overflow: hidden;
         }
 
         .table-grid > div {
             padding: 10px;
             line-height: 10px;
-            border: 0.5px solid;
+            border: 0.5px solid #cdcdcd;
             display: grid;
         }
 
@@ -211,6 +215,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
     gridDataFiltered: any;
     assets = assets;
     gridReactiveForm: FormGroup;
+    requestJSONResponse = new HttpHeaders();
 
     sliderImages: SliderImage[];
     currentSliderImage = 0;
@@ -224,6 +229,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
     }
 
     ngOnInit() {
+        this.injectMeta();
         this.injectGoogleMapsScript();
         const instance = this.widgetInstance;
 
@@ -273,6 +279,9 @@ export class MapComponent implements OnInit, IWidgetComponent {
             console.warn(err);
         }
 
+        this.requestJSONResponse.append('accept', 'application/json;charset=utf-8');
+        this.requestJSONResponse.append('Authorization', 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkluZm9yQWNjZXNzVG9rZW5TaWduaW5nQ2VydGlmaWNhdGUtMTU3NjM2MzI3NyJ9.eyJzY29wZSI6IiIsImlzcyI6Imh0dHBzOi8vbWluZ2xlLXNzby5ldTEuaW5mb3JjbG91ZHN1aXRlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbWluZ2xlLWlvbmFwaS5ldTEuaW5mb3JjbG91ZHN1aXRlLmNvbSIsImp0aSI6IjEyeXZnMWN4UWtFN0dTOVlrRVBjUHh1WWNES2xxcUMyR1h4ViIsIklkZW50aXR5MiI6ImIxOWNjZjc1LTRiM2ItNGMwOS05ZmMyLTc4NThjOTBkM2RkYyIsIlRlbmFudCI6IkZFTExPV0NPTlNVTFRJTkdfREVWIiwiU1NPU2Vzc2lvbklEIjoiRkVMTE9XQ09OU1VMVElOR19ERVZ-OWYxYzEwNmUtNGE1OC00MGMyLTg3MmItYTgzZTNlOWQ2NjRiIiwiRW5mb3JjZVNjb3Blc0ZvckNsaWVudCI6ImZhbHNlIiwiZXhwIjoxNjE2ODc0MTQxfQ.CQ_WpNF1FuDbeclClYBcyzdL1FLpeqbrrBWu9K4KxbEBRUs9_2o7QLSDEPz5uFhfk0Cf0QzeRifXP3WGLM1rM-N6tg1iSQdczs4JEO5KXidV2zn3G4R8WeOKb6xwSbiyebvo8Bz6VNyE43x-IQORUdl3KVUqEsv3SSn_vqf2AQ1Qm4DkhauUmg9EZZIM01HJsjfiXfL9XZ0mGMR2xmtHUxthMQ-RtWEPa-okWeFbtRjNdG82UEX5DFYfjVU8N59aogC_PEQkggQht-8smJ0aWsqtN-nlYSlLIKUln9R5LBRsD2UR0jLjB8aI3LLhvr4rvQlJM7KqhnMQ0lIrGZWAkw');
+
         // this.sliderImages = [
         //     {src: 'https://picsum.photos/550/401'},
         //     {src: 'https://picsum.photos/550/402'},
@@ -285,7 +294,10 @@ export class MapComponent implements OnInit, IWidgetComponent {
         //     console.log('Scroll position should now be changed.');
         //     this.imageSlider.nativeElement.scrollLeft = 550;
         // }, 4000);
-        this.http.get('https://run.mocky.io/v3/5c3199e0-823f-4d88-b67a-407a33c30af3').pipe(take(1)).subscribe((apiResponse: any) => {
+
+        this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FAsset_Image%5B%40Status%20%3D%20%2210%22%5D&%24offset=0&%24limit=1000', {headers: this.requestJSONResponse}).toPromise().then((apiResponse: any) => {
+            // this.http.get('https://run.mocky.io/v3/5c3199e0-823f-4d88-b67a-407a33c30af3').pipe(take(1)).subscribe((apiResponse: any) => {
+            console.log(apiResponse);
             // console.clear();
             console.log('---------------------------------------------------');
             const newSliderImagesObject = apiResponse.items.item.map((item: any) => {
@@ -299,6 +311,10 @@ export class MapComponent implements OnInit, IWidgetComponent {
             this.sliderImages = newSliderImagesObject;
             console.log(this.sliderImages);
             // console.log(apiResponse?.items.item);
+        }).catch((err) => {
+            console.warn('--------------------------------------------');
+            console.error(err);
+            console.warn('---------------------------------------------');
         });
 
         this.changeDetectionRef.markForCheck();
@@ -344,22 +360,44 @@ export class MapComponent implements OnInit, IWidgetComponent {
         console.log('Plugin should be loaded by now.');
         try {
             const mapProperties = {
-                center: new google.maps.LatLng(53.551086, 9.993682),
-                zoom: 15,
+                center: new google.maps.LatLng(53.544258, 9.952000),
+                zoom: 13,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             this.map = new google.maps.Map(this.mapElement.nativeElement, mapProperties);
+            this.addMarker('53.533917,9.950556');
+            this.addMarker('53.528472,9.953222');
+            this.addMarker('53.530222,9.952333');
+            this.addMarker('53.531556,9.951750');
+            this.addMarker('53.531889,9.951583');
+            this.addMarker('53.529583,9.952694');
         } catch (err) {
             console.error('Error setting up google maps plugin.');
             console.warn(err);
         }
     }
 
+    addMarker(latLong: string, title?: string) {
+        new google.maps.Marker({
+            position: {lat: +latLong.split(',')[0], lng: +latLong.split(',')[1]},
+            map: this.map,
+            title: title ? title : ''
+        });
+    }
+
+    injectMeta() {
+        let node = document.createElement('meta');
+        node.name = 'referrer';
+        node.content = 'no-referrer';
+        document.getElementsByTagName('head')[0].appendChild(node);
+    }
+
 
     injectGoogleMapsScript() {
         let node = document.createElement('script'); // creates the script tag
-        // node.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAF2LWQraFh6vs8rKvc5fjkCZyzaKQkmE8'; // sets the source (insert url in between quotes)
-        node.src = 'https://maps.googleapis.com/maps/api/js'; // sets the source (insert url in between quotes)
+        node.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAF2LWQraFh6vs8rKvc5fjkCZyzaKQkmE8';
+        // node.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDLG1B0MT2DyoTSZWdjm5G-kn3UwyBixGA';
+        // node.src = 'https://maps.googleapis.com/maps/api/js'; // sets the source (insert url in between quotes)
         node.type = 'text/javascript'; // set the script type
         function gmapsLoaded() {
             this.googleMapsLibraryLoaded();
@@ -390,7 +428,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
     }
 
     invalidateImage(sliderImage: SliderImage) {
-        sliderImage.src= assets.error;
+        sliderImage.src = assets.error;
         console.error('Error loading: ', sliderImage.src);
     }
 }
