@@ -27,7 +27,7 @@ interface SliderImage {
             </div>
 
             <!-- Second Box (Grid)        -->
-            <div>
+            <div class="coordinates-outline">
                 <form [formGroup]="gridReactiveForm">
                     <div class="table-grid">
                         <div class="heading-row"></div>
@@ -137,18 +137,22 @@ interface SliderImage {
             color: white;
             width: 20rem;
             background-color: white;
+            color: black;
             border: 0px;
             font-size: 11px;
             padding-left: 0px;
             margin-top: 2px;
         }
+        
+        .coordinates-outline {
+            border: 1px solid #cdcdcd;
+            border-radius: 15px;
+            overflow: hidden;
+        }
 
         .table-grid {
             display: grid;
-            border: 1px solid #cdcdcd;
             grid-template-columns: 0.1fr 0.9fr 0.9fr;
-            border-radius: 15px;
-            overflow: hidden;
         }
 
         .table-grid > div {
@@ -296,7 +300,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
         // }, 4000);
 
         this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FAsset_Image%5B%40Status%20%3D%20%2210%22%5D&%24offset=0&%24limit=1000', {headers: this.requestJSONResponse}).toPromise().then((apiResponse: any) => {
-            // this.http.get('https://run.mocky.io/v3/5c3199e0-823f-4d88-b67a-407a33c30af3').pipe(take(1)).subscribe((apiResponse: any) => {
+        // this.http.get('https://run.mocky.io/v3/5c3199e0-823f-4d88-b67a-407a33c30af3').pipe(take(1)).toPromise().then((apiResponse: any) => {
             console.log(apiResponse);
             // console.clear();
             console.log('---------------------------------------------------');
