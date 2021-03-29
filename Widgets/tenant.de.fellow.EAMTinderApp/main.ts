@@ -232,7 +232,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
         this.gridDataFiltered = this.gridData.slice();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.injectMeta();
         this.injectGoogleMapsScript();
         const instance = this.widgetInstance;
@@ -283,8 +283,9 @@ export class MapComponent implements OnInit, IWidgetComponent {
             console.warn(err);
         }
 
+        const token = await this.refreshToken();
         this.requestJSONResponse.append('accept', 'application/json;charset=utf-8');
-        this.requestJSONResponse.append('Authorization', 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkluZm9yQWNjZXNzVG9rZW5TaWduaW5nQ2VydGlmaWNhdGUtMTU3NjM2MzI3NyJ9.eyJzY29wZSI6IiIsImlzcyI6Imh0dHBzOi8vbWluZ2xlLXNzby5ldTEuaW5mb3JjbG91ZHN1aXRlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbWluZ2xlLWlvbmFwaS5ldTEuaW5mb3JjbG91ZHN1aXRlLmNvbSIsImp0aSI6IjEyeXZnMWN4UWtFN0dTOVlrRVBjUHh1WWNES2xxcUMyR1h4ViIsIklkZW50aXR5MiI6ImIxOWNjZjc1LTRiM2ItNGMwOS05ZmMyLTc4NThjOTBkM2RkYyIsIlRlbmFudCI6IkZFTExPV0NPTlNVTFRJTkdfREVWIiwiU1NPU2Vzc2lvbklEIjoiRkVMTE9XQ09OU1VMVElOR19ERVZ-OWYxYzEwNmUtNGE1OC00MGMyLTg3MmItYTgzZTNlOWQ2NjRiIiwiRW5mb3JjZVNjb3Blc0ZvckNsaWVudCI6ImZhbHNlIiwiZXhwIjoxNjE2ODc0MTQxfQ.CQ_WpNF1FuDbeclClYBcyzdL1FLpeqbrrBWu9K4KxbEBRUs9_2o7QLSDEPz5uFhfk0Cf0QzeRifXP3WGLM1rM-N6tg1iSQdczs4JEO5KXidV2zn3G4R8WeOKb6xwSbiyebvo8Bz6VNyE43x-IQORUdl3KVUqEsv3SSn_vqf2AQ1Qm4DkhauUmg9EZZIM01HJsjfiXfL9XZ0mGMR2xmtHUxthMQ-RtWEPa-okWeFbtRjNdG82UEX5DFYfjVU8N59aogC_PEQkggQht-8smJ0aWsqtN-nlYSlLIKUln9R5LBRsD2UR0jLjB8aI3LLhvr4rvQlJM7KqhnMQ0lIrGZWAkw');
+        this.requestJSONResponse.append('Authorization', `Bearer ${token}`);
 
         // this.sliderImages = [
         //     {src: 'https://picsum.photos/550/401'},
@@ -322,6 +323,41 @@ export class MapComponent implements OnInit, IWidgetComponent {
         });
 
         this.changeDetectionRef.markForCheck();
+    }
+
+    async refreshToken(){
+        const url = 'https://mingle-sso.eu1.inforcloudsuite.com:443/FELLOWCONSULTING_DEV/as/token.oauth2';        
+        const config = {
+            "ti": "FELLOWCONSULTING_DEV",
+            "cn": "EAM-farooqak",
+            "dt": "12",
+            "ci": "FELLOWCONSULTING_DEV~f7OB2dfXWicZAgc0Iqrzxjm61Mo2_fg603uJhd_Ebw4",
+            "cs": "uhnI9VPlKqjiqSWkfvuC1KRWXw9EanXs7d1ezfgUP8TDiS_FG3IxgpLQX9qe7mq5VEPMo47ZhzC_SqE7qQnLCw",
+            "iu": "https://mingle-ionapi.eu1.inforcloudsuite.com",
+            "pu": "https://mingle-sso.eu1.inforcloudsuite.com:443/FELLOWCONSULTING_DEV/as/",
+            "oa": "authorization.oauth2",
+            "ot": "token.oauth2",
+            "or": "revoke_token.oauth2",
+            "ev": "V1480769020",
+            "v": "1.0",
+            "saak": "FELLOWCONSULTING_DEV#QoGbrCkl3Tlt0FCAfKbAxu_gA_sYGkkxUPMbcRL1ZHdQmoBRXNIvgsFNtbg_pABQd107Vs6Bh_hMPjNPZMGk9A",
+            "sask": "dNG92c1gXg-G3CjfeTEj0g6HjYXCZa2NZSv7_3lBX89vATfiE_PtdPXxxykg51cuH-TPOyDSruR_relzTg83bg"
+        };
+        return await this.http.post(
+            `${config.pu}${config.ot}`, 
+            {
+                grant_type: "password",
+                username: config.saak,
+                password: config.sask,
+                scope: ''
+            }, 
+            { 
+                headers: { 
+                    // 'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Bearer ' + btoa(`${config.ci}:${config.cs}`)
+                }
+        }).toPromise();
     }
 
     slideToFirst() {

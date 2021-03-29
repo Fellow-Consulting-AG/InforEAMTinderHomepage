@@ -7,6 +7,42 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi-angular", "lime", "./assets", "@angular/forms", "rxjs/operators", "@angular/common/http", "@angular/common/http"], function (require, exports, common_1, core_1, sohoxi_angular_1, lime_1, assets_1, forms_1, operators_1, http_1, http_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -24,86 +60,138 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
             this.gridDataFiltered = this.gridData.slice();
         };
         MapComponent.prototype.ngOnInit = function () {
-            var _this = this;
-            this.injectMeta();
-            this.injectGoogleMapsScript();
-            var instance = this.widgetInstance;
-            this.gridData = [{ icon: assets_1.assets.checkIcon, coordinates: '52.5200° N, 13.4050° E', date: 'March 14, 1879' },
-                { icon: assets_1.assets.noIcon, coordinates: '48.1351° N, 11.5820° E', date: 'January 4, 1643' },
-                { icon: assets_1.assets.checkIcon, coordinates: '50.1109° N, 8.6821° E', date: 'July 10, 1856' },
-                { icon: assets_1.assets.checkIcon, coordinates: '53.5511° N, 9.9937° E', date: 'February 22, 1788' },
-            ];
-            this.gridDataFiltered = this.gridData.slice();
-            this.gridReactiveForm = this.fb.group({
-                locationFilter: '',
-                dateFilter: ''
-            });
-            this.gridReactiveForm.get('locationFilter').valueChanges.pipe(operators_1.filter(function (value) {
-                if (value === '') {
-                    _this.resetGridFilter();
-                    return false;
-                }
-                return true;
-            })).subscribe(function (locationFilterValue) {
-                _this.gridReactiveForm.get('dateFilter').setValue('');
-                _this.gridDataFiltered = _this.gridData.filter(function (entry) { return entry.coordinates.includes(locationFilterValue); });
-            });
-            this.gridReactiveForm.get('dateFilter').valueChanges.pipe(operators_1.filter(function (value) {
-                if (value === '') {
-                    _this.resetGridFilter();
-                    return false;
-                }
-                return true;
-            })).subscribe(function (dateFilterValue) {
-                _this.gridReactiveForm.get('locationFilter').setValue('');
-                _this.gridDataFiltered = _this.gridData.filter(function (entry) { return entry.date.toLowerCase().includes(dateFilterValue.toLowerCase()); });
-            });
-            // this.updateSortOrder();
-            // ** INITIALIZE JQUERY PLUGINS
-            try {
-                // @ts-ignore
-                $('.dropdown').dropdown();
-                // @ts-ignore
-            }
-            catch (err) {
-                console.log('Error initialzing JQuery components.');
-                console.warn(err);
-            }
-            this.requestJSONResponse.append('accept', 'application/json;charset=utf-8');
-            this.requestJSONResponse.append('Authorization', 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkluZm9yQWNjZXNzVG9rZW5TaWduaW5nQ2VydGlmaWNhdGUtMTU3NjM2MzI3NyJ9.eyJzY29wZSI6IiIsImlzcyI6Imh0dHBzOi8vbWluZ2xlLXNzby5ldTEuaW5mb3JjbG91ZHN1aXRlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbWluZ2xlLWlvbmFwaS5ldTEuaW5mb3JjbG91ZHN1aXRlLmNvbSIsImp0aSI6IjEyeXZnMWN4UWtFN0dTOVlrRVBjUHh1WWNES2xxcUMyR1h4ViIsIklkZW50aXR5MiI6ImIxOWNjZjc1LTRiM2ItNGMwOS05ZmMyLTc4NThjOTBkM2RkYyIsIlRlbmFudCI6IkZFTExPV0NPTlNVTFRJTkdfREVWIiwiU1NPU2Vzc2lvbklEIjoiRkVMTE9XQ09OU1VMVElOR19ERVZ-OWYxYzEwNmUtNGE1OC00MGMyLTg3MmItYTgzZTNlOWQ2NjRiIiwiRW5mb3JjZVNjb3Blc0ZvckNsaWVudCI6ImZhbHNlIiwiZXhwIjoxNjE2ODc0MTQxfQ.CQ_WpNF1FuDbeclClYBcyzdL1FLpeqbrrBWu9K4KxbEBRUs9_2o7QLSDEPz5uFhfk0Cf0QzeRifXP3WGLM1rM-N6tg1iSQdczs4JEO5KXidV2zn3G4R8WeOKb6xwSbiyebvo8Bz6VNyE43x-IQORUdl3KVUqEsv3SSn_vqf2AQ1Qm4DkhauUmg9EZZIM01HJsjfiXfL9XZ0mGMR2xmtHUxthMQ-RtWEPa-okWeFbtRjNdG82UEX5DFYfjVU8N59aogC_PEQkggQht-8smJ0aWsqtN-nlYSlLIKUln9R5LBRsD2UR0jLjB8aI3LLhvr4rvQlJM7KqhnMQ0lIrGZWAkw');
-            // this.sliderImages = [
-            //     {src: 'https://picsum.photos/550/401'},
-            //     {src: 'https://picsum.photos/550/402'},
-            //     {src: 'https://picsum.photos/550/403'},
-            //     {src: 'https://picsum.photos/550/399'},
-            //     {src: 'https://picsum.photos/550/398'},
-            //     {src: 'https://picsum.photos/550/397'}
-            // ];
-            // setInterval(() => {
-            //     console.log('Scroll position should now be changed.');
-            //     this.imageSlider.nativeElement.scrollLeft = 550;
-            // }, 4000);
-            this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FAsset_Image%5B%40Status%20%3D%20%2210%22%5D&%24offset=0&%24limit=1000', { headers: this.requestJSONResponse }).toPromise().then(function (apiResponse) {
-                // this.http.get('https://run.mocky.io/v3/5c3199e0-823f-4d88-b67a-407a33c30af3').pipe(take(1)).toPromise().then((apiResponse: any) => {
-                console.log(apiResponse);
-                // console.clear();
-                console.log('---------------------------------------------------');
-                var newSliderImagesObject = apiResponse.items.item.map(function (item) {
-                    return {
-                        src: item.resrs.res[1].url
-                    };
-                    // return item.resrs.res[1].url;
-                    // console.log(item.resrs.res[1].url);
+            return __awaiter(this, void 0, void 0, function () {
+                var instance, token;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            this.injectMeta();
+                            this.injectGoogleMapsScript();
+                            instance = this.widgetInstance;
+                            this.gridData = [{ icon: assets_1.assets.checkIcon, coordinates: '52.5200° N, 13.4050° E', date: 'March 14, 1879' },
+                                { icon: assets_1.assets.noIcon, coordinates: '48.1351° N, 11.5820° E', date: 'January 4, 1643' },
+                                { icon: assets_1.assets.checkIcon, coordinates: '50.1109° N, 8.6821° E', date: 'July 10, 1856' },
+                                { icon: assets_1.assets.checkIcon, coordinates: '53.5511° N, 9.9937° E', date: 'February 22, 1788' },
+                            ];
+                            this.gridDataFiltered = this.gridData.slice();
+                            this.gridReactiveForm = this.fb.group({
+                                locationFilter: '',
+                                dateFilter: ''
+                            });
+                            this.gridReactiveForm.get('locationFilter').valueChanges.pipe(operators_1.filter(function (value) {
+                                if (value === '') {
+                                    _this.resetGridFilter();
+                                    return false;
+                                }
+                                return true;
+                            })).subscribe(function (locationFilterValue) {
+                                _this.gridReactiveForm.get('dateFilter').setValue('');
+                                _this.gridDataFiltered = _this.gridData.filter(function (entry) { return entry.coordinates.includes(locationFilterValue); });
+                            });
+                            this.gridReactiveForm.get('dateFilter').valueChanges.pipe(operators_1.filter(function (value) {
+                                if (value === '') {
+                                    _this.resetGridFilter();
+                                    return false;
+                                }
+                                return true;
+                            })).subscribe(function (dateFilterValue) {
+                                _this.gridReactiveForm.get('locationFilter').setValue('');
+                                _this.gridDataFiltered = _this.gridData.filter(function (entry) { return entry.date.toLowerCase().includes(dateFilterValue.toLowerCase()); });
+                            });
+                            // this.updateSortOrder();
+                            // ** INITIALIZE JQUERY PLUGINS
+                            try {
+                                // @ts-ignore
+                                $('.dropdown').dropdown();
+                                // @ts-ignore
+                            }
+                            catch (err) {
+                                console.log('Error initialzing JQuery components.');
+                                console.warn(err);
+                            }
+                            return [4 /*yield*/, this.refreshToken()];
+                        case 1:
+                            token = _a.sent();
+                            this.requestJSONResponse.append('accept', 'application/json;charset=utf-8');
+                            this.requestJSONResponse.append('Authorization', "Bearer " + token);
+                            // this.sliderImages = [
+                            //     {src: 'https://picsum.photos/550/401'},
+                            //     {src: 'https://picsum.photos/550/402'},
+                            //     {src: 'https://picsum.photos/550/403'},
+                            //     {src: 'https://picsum.photos/550/399'},
+                            //     {src: 'https://picsum.photos/550/398'},
+                            //     {src: 'https://picsum.photos/550/397'}
+                            // ];
+                            // setInterval(() => {
+                            //     console.log('Scroll position should now be changed.');
+                            //     this.imageSlider.nativeElement.scrollLeft = 550;
+                            // }, 4000);
+                            this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FAsset_Image%5B%40Status%20%3D%20%2210%22%5D&%24offset=0&%24limit=1000', { headers: this.requestJSONResponse }).toPromise().then(function (apiResponse) {
+                                // this.http.get('https://run.mocky.io/v3/5c3199e0-823f-4d88-b67a-407a33c30af3').pipe(take(1)).toPromise().then((apiResponse: any) => {
+                                console.log(apiResponse);
+                                // console.clear();
+                                console.log('---------------------------------------------------');
+                                var newSliderImagesObject = apiResponse.items.item.map(function (item) {
+                                    return {
+                                        src: item.resrs.res[1].url
+                                    };
+                                    // return item.resrs.res[1].url;
+                                    // console.log(item.resrs.res[1].url);
+                                });
+                                _this.sliderImages = newSliderImagesObject;
+                                console.log(_this.sliderImages);
+                                // console.log(apiResponse?.items.item);
+                            }).catch(function (err) {
+                                console.warn('--------------------------------------------');
+                                console.error(err);
+                                console.warn('---------------------------------------------');
+                            });
+                            this.changeDetectionRef.markForCheck();
+                            return [2 /*return*/];
+                    }
                 });
-                _this.sliderImages = newSliderImagesObject;
-                console.log(_this.sliderImages);
-                // console.log(apiResponse?.items.item);
-            }).catch(function (err) {
-                console.warn('--------------------------------------------');
-                console.error(err);
-                console.warn('---------------------------------------------');
             });
-            this.changeDetectionRef.markForCheck();
+        };
+        MapComponent.prototype.refreshToken = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var url, config;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            url = 'https://mingle-sso.eu1.inforcloudsuite.com:443/FELLOWCONSULTING_DEV/as/token.oauth2';
+                            config = {
+                                "ti": "FELLOWCONSULTING_DEV",
+                                "cn": "EAM-farooqak",
+                                "dt": "12",
+                                "ci": "FELLOWCONSULTING_DEV~f7OB2dfXWicZAgc0Iqrzxjm61Mo2_fg603uJhd_Ebw4",
+                                "cs": "uhnI9VPlKqjiqSWkfvuC1KRWXw9EanXs7d1ezfgUP8TDiS_FG3IxgpLQX9qe7mq5VEPMo47ZhzC_SqE7qQnLCw",
+                                "iu": "https://mingle-ionapi.eu1.inforcloudsuite.com",
+                                "pu": "https://mingle-sso.eu1.inforcloudsuite.com:443/FELLOWCONSULTING_DEV/as/",
+                                "oa": "authorization.oauth2",
+                                "ot": "token.oauth2",
+                                "or": "revoke_token.oauth2",
+                                "ev": "V1480769020",
+                                "v": "1.0",
+                                "saak": "FELLOWCONSULTING_DEV#QoGbrCkl3Tlt0FCAfKbAxu_gA_sYGkkxUPMbcRL1ZHdQmoBRXNIvgsFNtbg_pABQd107Vs6Bh_hMPjNPZMGk9A",
+                                "sask": "dNG92c1gXg-G3CjfeTEj0g6HjYXCZa2NZSv7_3lBX89vATfiE_PtdPXxxykg51cuH-TPOyDSruR_relzTg83bg"
+                            };
+                            return [4 /*yield*/, this.http.post("" + config.pu + config.ot, {
+                                    grant_type: "password",
+                                    username: config.saak,
+                                    password: config.sask,
+                                    scope: ''
+                                }, {
+                                    headers: {
+                                        // 'Access-Control-Allow-Origin': '*',
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                        'Authorization': 'Bearer ' + btoa(config.ci + ":" + config.cs)
+                                    }
+                                }).toPromise()];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
         };
         MapComponent.prototype.slideToFirst = function () {
             this.currentSliderImage = 0;
