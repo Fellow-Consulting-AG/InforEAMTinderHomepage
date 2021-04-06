@@ -1,6 +1,6 @@
 /// <reference types="@types/googlemaps" />
 import {CommonModule} from "@angular/common";
-import {ChangeDetectorRef, Component, Input, NgModule, OnInit, ViewChild} from "@angular/core";
+import {ChangeDetectorRef, Component, HostListener, Input, NgModule, OnInit, ViewChild} from "@angular/core";
 import {SohoListViewModule} from "@infor/sohoxi-angular";
 import {} from "googlemaps";
 import {IWidgetComponent, IWidgetContext, IWidgetInstance, IWidgetSettingMetadata, WidgetSettingsType} from "lime";
@@ -9,12 +9,6 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular
 import {filter, take} from "rxjs/operators";
 import {HttpClientModule, HttpHeaders} from "@angular/common/http";
 import {HttpClient} from "@angular/common/http";
-
-interface SliderImage {
-    src: string;
-
-    [key: string]: any;
-}
 
 interface DocumentAttribute {
     pin: string;
@@ -27,6 +21,7 @@ interface InforDocument {
     date: string;
     pid: string;
     status: '10' | '30' | '40';
+    selected: boolean;
 }
 
 @Component({
@@ -47,15 +42,27 @@ interface InforDocument {
             <div class="coordinates-outline">
                 <form [formGroup]="gridReactiveForm">
                     <div class="table-grid">
-                        <div class="heading-row"></div>
+                        <div class="heading-row">
+                            <select id="states" name="states" style="width: 16px;" formControlName="statusFilter">
+                                <option value="all">Status</option>
+                                <option value="10">Initial</option>
+                                <option value="30">Rejected</option>
+                                <option value="40">Approved</option>
+                            </select>
+                        </div>
                         <div class="heading-row">LOCATION<input type="text" formControlName="locationFilter"
                                                                 class="grid-filter-input"></div>
                         <div class="heading-row">DATA<input type="text" formControlName="dateFilter"
                                                             class="grid-filter-input"></div>
-                        <ng-container *ngFor="let gridRow of gridDataFiltered">
-                            <div style="padding:3px"><img [src]="gridRow.status == '40' ? assets.checkIcon : gridRow.status == '30' ? assets.noIcon : ''"></div>
-                            <div>{{gridRow.attributes.pin}}</div>
-                            <div>{{gridRow.date}}</div>
+                        <ng-container *ngFor="let gridRow of gridDataFiltered;">
+                            <div style="padding:3px" [ngClass]="{'table-grid-selected': gridRow.selected}"
+                            ><img width="20" style="place-self: center"
+                                  [src]="gridRow.status == '40' ? assets.checkIcon : gridRow.status == '30' ? assets.noIcon : ''">
+                            </div>
+                            <div [ngClass]="{'table-grid-selected': gridRow.selected}"
+                            >{{gridRow.attributes.pin}}</div>
+                            <div [ngClass]="{'table-grid-selected': gridRow.selected}"
+                            >{{gridRow.date}}</div>
                         </ng-container>
                     </div>
                 </form>
@@ -76,7 +83,8 @@ interface InforDocument {
                         </div>
 
                         <div class="controls">
-                            <div style="padding: 2px; cursor: pointer" (click)="inforMatchingDocuments[currentSliderImage].status = 30; workOrderFormVisible = false;" >
+                            <div style="padding: 2px; cursor: pointer"
+                                 (click)="inforMatchingDocuments[currentSliderImage].status = 30; workOrderFormVisible = false;">
                                 <img [src]="assets.noIcon" width="25"/>
                             </div>
                             <div style="display: flex; justify-content: center">
@@ -100,9 +108,7 @@ interface InforDocument {
                         </div>
                     </div>
                 </ng-container>
-
             </div>
-
 
             <!-- Fourth Box  (Form)      -->
             <div *ngIf="workOrderFormVisible">
@@ -114,7 +120,6 @@ interface InforDocument {
                         <textarea id="description" class="resizable" name="description"
                                   placeholder="Short Description"></textarea>
                     </div>
-
                     <div class="field">
                         Location: N75.34334 E36.4545454<br>
                         Time: 14:00:00:00 PKST
@@ -162,13 +167,13 @@ interface InforDocument {
         .heading-row {
             background: #c3c3c3;
             color: white;
-            height: 4.5rem;
+            height: 5rem;
         }
 
         .grid-filter-input {
             height: 1.5rem;
             color: white;
-            width: 20rem;
+            width: 15rem;
             background-color: white;
             color: black;
             border: 0px;
@@ -193,6 +198,10 @@ interface InforDocument {
             line-height: 10px;
             border: 0.5px solid #cdcdcd;
             display: grid;
+        }
+
+        .table-grid-selected {
+            background-color: lightgray;
         }
 
         .form-outline {
@@ -256,6 +265,12 @@ export class MapComponent implements OnInit, IWidgetComponent {
     @Input() widgetInstance: IWidgetInstance;
     @ViewChild("map", {static: true}) mapElement: any;
     @ViewChild("imageSlider", {static: true}) imageSlider: any;
+
+    @HostListener('document:keydown', ['$event'])
+    keypress(e: KeyboardEvent) {
+        this.onKeyPress(e);
+    }
+
     sliderElement: HTMLElement;
     map: google.maps.Map;
     gridData: any;
@@ -263,6 +278,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
     assets = assets;
     gridReactiveForm: FormGroup;
     requestJSONResponse = new HttpHeaders();
+    token: string;
 
     inforMatchingDocuments: InforDocument[];
     monthNames = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -285,24 +301,26 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
         this.gridReactiveForm = this.fb.group({
             locationFilter: '',
-            dateFilter: ''
+            dateFilter: '',
+            statusFilter: ''
         });
-
 
         this.gridReactiveForm.get('locationFilter').valueChanges.pipe(filter((value) => {
             if (value === '') {
                 this.resetGridFilter();
+                this.clearSelectionOnTableData();
                 return false;
             }
             return true;
         })).subscribe(locationFilterValue => {
             this.gridReactiveForm.get('dateFilter').setValue('');
-            this.gridDataFiltered = this.inforMatchingDocuments.filter((entry: any) => entry.coordinates.includes(locationFilterValue));
+            this.gridDataFiltered = this.inforMatchingDocuments.filter((entry: any) => entry.attributes.pin.includes(locationFilterValue));
         });
 
         this.gridReactiveForm.get('dateFilter').valueChanges.pipe(filter((value) => {
             if (value === '') {
                 this.resetGridFilter();
+                this.clearSelectionOnTableData();
                 return false;
             }
             return true;
@@ -311,11 +329,27 @@ export class MapComponent implements OnInit, IWidgetComponent {
             this.gridDataFiltered = this.inforMatchingDocuments.filter((entry: any) => entry.date.toLowerCase().includes(dateFilterValue.toLowerCase()));
         });
 
+        this.gridReactiveForm.get('statusFilter').valueChanges.pipe(filter((value) => {
+            if (value === '' || value === 'all') {
+                this.resetGridFilter();
+                this.clearSelectionOnTableData();
+                return false;
+            }
+            return true;
+        })).subscribe(dateFilterValue => {
+            if (dateFilterValue === '10') {
+                dateFilterValue = null;
+            }
+            this.gridReactiveForm.get('locationFilter').setValue('');
+            this.gridDataFiltered = this.inforMatchingDocuments.filter((entry: any) => entry.status == dateFilterValue);
+        });
         // this.updateSortOrder();
         // ** INITIALIZE JQUERY PLUGINS
         try {
             // @ts-ignore
             $('.dropdown').dropdown();
+            // @ts-ignore
+            $('.dropdown-2').dropdown();
             // @ts-ignore
         } catch (err) {
             console.log('Error initialzing JQuery components.');
@@ -328,12 +362,12 @@ export class MapComponent implements OnInit, IWidgetComponent {
         //     this.imageSlider.nativeElement.scrollLeft = 550;
         // }, 4000);
 
-        const token = await this.getToken();
-        this.http.get('https://run.mocky.io/v3/0d2d4432-5761-4414-817f-9708cefc4c64').pipe(take(1)).toPromise().then((apiResponse: any) => {
+        this.token = await this.getToken() as string;
+        this.http.get('https://run.mocky.io/v3/4b3b0b41-5a5e-43a2-8d47-ddafac189bd2').pipe(take(1)).toPromise().then((apiResponse: any) => {
             // this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
             //     headers: new HttpHeaders({
             //         'Content-Type': 'application/json',
-            //         'Authorization': `Bearer ${token}`
+            //         'Authorization': `Bearer ${this.token}`
             //     })
             // }).toPromise().then((apiResponse: any) => {
             console.clear();
@@ -385,39 +419,23 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
     slideToFirst() {
         this.currentSliderImage = 0;
-        this.calibrateSlider();
     }
 
     slideToLast() {
         this.currentSliderImage = this.inforMatchingDocuments.length - 1;
-        this.calibrateSlider();
     }
 
     slideToNextImage() {
         if (this.currentSliderImage < this.inforMatchingDocuments.length - 1) {
             this.currentSliderImage++;
-            this.calibrateSlider();
         }
     }
 
     slideToPreviousImage() {
         if (this.currentSliderImage > 0) {
             this.currentSliderImage--;
-            this.calibrateSlider();
         }
     }
-
-    calibrateSlider() {
-        // console.log(this.currentSliderImage);
-        // console.log(this.imageSlider.nativeElement.scrollLeft);
-        // console.log(this.sliderElement.scrollLeft);
-        // this.sliderElement.scrollLeft = this.currentSliderImage * 550;
-        // this.sliderElement.scrollLeft = (this.currentSliderImage -1) * 550
-        // const targetChild = document.getElementById('slider_image_' + this.currentSliderImage);
-        // console.log(targetChild.offsetLeft);
-        // this.sliderElement.scrollLeft += 560;
-    }
-
 
     googleMapsLibraryLoaded() {
         console.log('Plugin should be loaded by now.');
@@ -428,19 +446,13 @@ export class MapComponent implements OnInit, IWidgetComponent {
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             this.map = new google.maps.Map(this.mapElement.nativeElement, mapProperties);
-            // this.addMarker('53.533917,9.950556');
-            // this.addMarker('53.528472,9.953222');
-            // this.addMarker('53.530222,9.952333');
-            // this.addMarker('53.531556,9.951750');
-            // this.addMarker('53.531889,9.951583');
-            // this.addMarker('53.529583,9.952694');
         } catch (err) {
             console.error('Error setting up google maps plugin.');
             console.warn(err);
         }
     }
 
-    addMarker(latLong: {lat: number, lng :number}, title?: string) {
+    addMarker(latLong: { lat: number, lng: number }, title?: string) {
         new google.maps.Marker({
             position: latLong,
             map: this.map,
@@ -453,6 +465,17 @@ export class MapComponent implements OnInit, IWidgetComponent {
         node.name = 'referrer';
         node.content = 'no-referrer';
         document.getElementsByTagName('head')[0].appendChild(node);
+    }
+
+    updateItemStatus(newStatusValue: 'approved' | 'rejected') {
+        this.http.put('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.token}`
+            })
+        }).toPromise().then((apiResponse: any) => {
+
+        });
     }
 
 
@@ -493,6 +516,80 @@ export class MapComponent implements OnInit, IWidgetComponent {
     invalidateImage(sliderImage: InforDocument) {
         sliderImage.imageSrc = assets.error;
         console.error('Error loading: ', sliderImage.imageSrc);
+    }
+
+    selectItem(gridRow: any) {
+        this.gridDataFiltered.forEach((item: any) => {
+            item.selected = false;
+        });
+        gridRow.selected = true;
+    }
+
+    clearSelectionOnTableData() {
+        this.gridDataFiltered.forEach((item: InforDocument) => {
+            item.selected = false;
+        });
+    }
+
+    private onKeyPress(event: KeyboardEvent) {
+        if (event.code === 'Enter') {
+            const indexOfSelectedImage = this.inforMatchingDocuments.findIndex((item: InforDocument) => item.selected === true);
+            if (indexOfSelectedImage != -1) {
+                this.currentSliderImage = indexOfSelectedImage;
+                this.workOrderFormVisible = true;
+            }
+        }
+        if (event.code === 'KeyA') {
+            this.gridDataFiltered.forEach((item: InforDocument) => item.selected && (item.status = "40"))
+        }
+
+        if (event.code === 'KeyX') {
+            this.gridDataFiltered.forEach((item: InforDocument) => item.selected && (item.status = "30"))
+        }
+        // On Down Arrow Press
+        if (event.key === 'ArrowDown') {
+            if (this.gridDataFiltered.every((item: InforDocument) => !item.selected)) {
+                //Select the top item in the list.
+                this.gridDataFiltered[0].selected = true;
+                return;
+            }
+            this.selectNextItemInTable();
+        }
+
+
+        //On Up Arrow Press
+        if (event.key === 'ArrowUp') {
+            if (this.gridDataFiltered.every((item: InforDocument) => !item.selected)) {
+                //Select the top item in the list.
+                this.gridDataFiltered[this.gridDataFiltered.length - 1].selected = true;
+                return;
+            }
+
+            this.gridDataFiltered.reverse();
+            this.selectNextItemInTable();
+            this.gridDataFiltered.reverse();
+            // this.clearSelectionOnTableData();
+        }
+
+    }
+
+    selectNextItemInTable() {
+        let itemSwitched = false;
+        this.gridDataFiltered.forEach((item: InforDocument, index: number) => {
+            if (index === this.gridDataFiltered.length) {
+                itemSwitched = false;
+                return;
+            }
+            if (item.selected) {
+                item.selected = false;
+                itemSwitched = true;
+                return;
+            }
+            if (itemSwitched) {
+                item.selected = true;
+                itemSwitched = false;
+            }
+        });
     }
 }
 
