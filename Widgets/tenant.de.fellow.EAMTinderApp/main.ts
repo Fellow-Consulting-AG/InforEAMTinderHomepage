@@ -43,8 +43,8 @@ interface InforDocument {
                 <form [formGroup]="gridReactiveForm">
                     <div class="table-grid">
                         <div class="heading-row">
-                            <select id="states" name="states" style="width: 16px;" formControlName="statusFilter">
-                                <option value="all">Status</option>
+                            <select id="states" name="states" style="width: 1.5vw;" formControlName="statusFilter">
+                                <option value="all">All</option>
                                 <option value="10">Initial</option>
                                 <option value="30">Rejected</option>
                                 <option value="40">Approved</option>
@@ -84,8 +84,8 @@ interface InforDocument {
 
                         <div class="controls">
                             <div style="padding: 2px; cursor: pointer"
-                                 (click)="inforMatchingDocuments[currentSliderImage].status = 30; workOrderFormVisible = false;">
-                                <img [src]="assets.noIcon" width="25"/>
+                                 (click)="inforMatchingDocuments[currentSliderImage].status = 30;disableWorkOrderForm();">
+                                <img [src]="assets.noIcon" width="23"/>
                             </div>
                             <div style="display: flex; justify-content: center">
                                 <div>
@@ -101,9 +101,9 @@ interface InforDocument {
                                          (click)="slideToLast()"/>
                                 </div>
                             </div>
-                            <div style="padding-left: 15px; padding-top: 2px;cursor: pointer;"
-                                 (click)="inforMatchingDocuments[currentSliderImage].status = 40; workOrderFormVisible = true;">
-                                <img [src]="assets.checkIcon" width="25"/>
+                            <div style="padding-left: 19px; padding-top: 2px;cursor: pointer;"
+                                 (click)="inforMatchingDocuments[currentSliderImage].status = 40; enableWorkOrderForm();">
+                                <img [src]="assets.checkIcon" width="23"/>
                             </div>
                         </div>
                     </div>
@@ -113,32 +113,45 @@ interface InforDocument {
             <!-- Fourth Box  (Form)      -->
             <div *ngIf="workOrderFormVisible">
                 <div class="form-outline">
-                    <div class="field">
-                        <input type="text" id="first-name" name="first-name" placeholder="Title">
-                    </div>
-                    <div class="field">
-                        <textarea id="description" class="resizable" name="description"
-                                  placeholder="Short Description"></textarea>
-                    </div>
-                    <div class="field">
-                        Location: N75.34334 E36.4545454<br>
-                        Time: 14:00:00:00 PKST
-                    </div>
-
-                    <div style="display:grid; grid-template-columns: 0.7fr 0.3fr;">
+                    <div style="font-size: 16px; margin-bottom: 15px">QUICK WORKORDER</div>
+                    <div style="display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px">
                         <div>
-                            <div class="field">
-                                <select id="states" name="states" class="dropdown">
-                                    <option value="AL">Assign To:</option>
-                                    <option value="CA">California</option>
-                                    <option value="DE">Delaware</option>
-                                    <option value="NY">New York</option>
-                                    <option value="WY">Wyoming</option>
-                                </select>
+                            <div>
+                                <input style="width: 100%" type="text" id="first-name" name="first-name"
+                                       placeholder="Title">
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <textarea style="width: 100%; height: 120px" id="description" name="description"
+                                          placeholder="Short Description"></textarea>
                             </div>
                         </div>
-                        <div style="display:flex; flex-direction: row-reverse">
-                            <button class="btn-primary" type="button" id="page-button-primary">Send</button>
+                        <div>
+                            <div>
+                                <div [ngStyle]="{'background-image': 'url(' + inforMatchingDocuments[currentSliderImage].imageSrc+ ')'}"
+                                     style="background-size:cover;height:165px">
+                                </div>
+                            </div>
+                            <div style="float: right; font-size: 12px; margin-top: 10px">
+                                Location: {{inforMatchingDocuments[currentSliderImage].attributes['pin']}}<br>
+                                Time: {{inforMatchingDocuments[currentSliderImage].date}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px; margin-top: 20px">
+                        <div>
+                            <select style="width: 100%;" id="states" name="states" class="dropdown">
+                                <option value="AL">Assign To:</option>
+                                <option value="CA">California</option>
+                                <option value="DE">Delaware</option>
+                                <option value="NY">New York</option>
+                                <option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button style="float: right" class="btn-primary" type="button" id="page-button-primary">
+                                Send
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -208,17 +221,20 @@ interface InforDocument {
             border: 1px solid #ccc;
             border-radius: 15px;
             padding: 10px;
+            height: 310px;
+            color: #ccc;
         }
 
         .controls {
             display: grid;
             grid-template-columns: 0.1fr 1fr 0.1fr;
-            background-color: #f0f0f098;
-            width: 100%;
-            border-radius: 10px;
+            background-color: white;
+            width: 98%;
+            margin-left: 1%;
+            padding-top: 1px;
+            border-radius: 5px;
             height: 30px;
             position: relative;
-            border: 1px solid;
             bottom: 40px;
         }
 
@@ -244,12 +260,22 @@ interface InforDocument {
         }
 
         .imageSlider {
+            display: grid;
             position: relative;
             transition-property: left;
             transition-duration: 0.5s;
             transition-timing-function: ease-in-out;
-            display: grid;
             grid-template-columns: repeat(15, 550px);
+        }
+
+        /* Dropdown: Assign To: Label color */
+        ::ng-deep .dropdown span {
+            color: #ccc;
+        }
+
+        /* Dropdown: Assign To: Width */
+        ::ng-deep .dropdown-wrapper {
+            width: 100%;
         }
     `]
     // changeDetection: ChangeDetectionStrategy.OnPush
@@ -343,34 +369,15 @@ export class MapComponent implements OnInit, IWidgetComponent {
             this.gridReactiveForm.get('locationFilter').setValue('');
             this.gridDataFiltered = this.inforMatchingDocuments.filter((entry: any) => entry.status == dateFilterValue);
         });
-        // this.updateSortOrder();
-        // ** INITIALIZE JQUERY PLUGINS
-        try {
-            // @ts-ignore
-            $('.dropdown').dropdown();
-            // @ts-ignore
-            $('.dropdown-2').dropdown();
-            // @ts-ignore
-        } catch (err) {
-            console.log('Error initialzing JQuery components.');
-            console.warn(err);
-        }
-
-
-        // setInterval(() => {
-        //     console.log('Scroll position should now be changed.');
-        //     this.imageSlider.nativeElement.scrollLeft = 550;
-        // }, 4000);
 
         this.token = await this.getToken() as string;
-        this.http.get('https://run.mocky.io/v3/4b3b0b41-5a5e-43a2-8d47-ddafac189bd2').pipe(take(1)).toPromise().then((apiResponse: any) => {
-            // this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
-            //     headers: new HttpHeaders({
-            //         'Content-Type': 'application/json',
-            //         'Authorization': `Bearer ${this.token}`
-            //     })
-            // }).toPromise().then((apiResponse: any) => {
-            console.clear();
+        // this.http.get('https://run.mocky.io/v3/19b7ff63-c41a-4e91-8b5a-37c9b448ef0e').pipe(take(1)).toPromise().then((apiResponse: any) => {
+        this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.token}`
+            })
+        }).toPromise().then((apiResponse: any) => {
             console.log(apiResponse);
 
             this.inforMatchingDocuments = apiResponse.items.item.map((item: any) => {
@@ -400,6 +407,21 @@ export class MapComponent implements OnInit, IWidgetComponent {
         });
 
         this.changeDetectionRef.markForCheck();
+    }
+
+    enableWorkOrderForm() {
+        if (this.workOrderFormVisible) {
+            return;
+        }
+        this.workOrderFormVisible = true;
+        setTimeout(() => {
+            // @ts-ignore
+            $('.dropdown').dropdown();
+        }, 200);
+    }
+
+    disableWorkOrderForm() {
+        this.workOrderFormVisible = false;
     }
 
 
@@ -533,10 +555,11 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
     private onKeyPress(event: KeyboardEvent) {
         if (event.code === 'Enter') {
+            console.log(this.inforMatchingDocuments);
             const indexOfSelectedImage = this.inforMatchingDocuments.findIndex((item: InforDocument) => item.selected === true);
             if (indexOfSelectedImage != -1) {
                 this.currentSliderImage = indexOfSelectedImage;
-                this.workOrderFormVisible = true;
+                this.enableWorkOrderForm();
             }
         }
         if (event.code === 'KeyA') {
