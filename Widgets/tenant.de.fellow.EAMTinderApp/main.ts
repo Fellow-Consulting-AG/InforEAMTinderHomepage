@@ -22,6 +22,7 @@ interface InforDocument {
     pid: string;
     status: '10' | '30' | '40';
     selected: boolean;
+    shortDescription: string;
 }
 
 @Component({
@@ -55,14 +56,15 @@ interface InforDocument {
                         <div class="heading-row">DATA<input type="text" formControlName="dateFilter"
                                                             class="grid-filter-input"></div>
                         <ng-container *ngFor="let gridRow of gridDataFiltered;">
-                            <div style="padding:3px" [ngClass]="{'table-grid-selected': gridRow.selected}"
-                            ><img width="20" style="place-self: center"
-                                  [src]="gridRow.status == '40' ? assets.checkIcon : gridRow.status == '30' ? assets.noIcon : ''">
+                            <div style="padding:3px; border-bottom: 3px solid #f0f0f0;"
+                                 [style.background-image]="gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null">
+                                <img width="20" style="place-self: center"
+                                     [src]="gridRow.status == '40' ? assets.checkIcon : gridRow.status == '30' ? assets.noIcon : ''">
                             </div>
-                            <div [ngClass]="{'table-grid-selected': gridRow.selected}"
-                            >{{gridRow.attributes.pin}}</div>
-                            <div [ngClass]="{'table-grid-selected': gridRow.selected}"
-                            >{{gridRow.date}}</div>
+                            <div style="border-bottom: 3px solid #f0f0f0;"
+                                 [style.background-image]="gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null">{{gridRow.attributes.pin}}</div>
+                            <div style="border-bottom: 3px solid #f0f0f0;"
+                                 [style.background-image]="gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null">{{gridRow.date}}</div>
                         </ng-container>
                     </div>
                 </form>
@@ -122,6 +124,7 @@ interface InforDocument {
                             </div>
                             <div style="margin-top: 10px;">
                                 <textarea style="width: 100%; height: 120px" id="description" name="description"
+                                          [(ngModel)]="inforMatchingDocuments[currentSliderImage].shortDescription"
                                           placeholder="Short Description"></textarea>
                             </div>
                         </div>
@@ -149,7 +152,8 @@ interface InforDocument {
                             </select>
                         </div>
                         <div>
-                            <button style="float: right" class="btn-primary" type="button" id="page-button-primary">
+                            <button style="float: right" class="btn-primary" type="button" id="page-button-primary"
+                                    (click)="send()">
                                 Send
                             </button>
                         </div>
@@ -178,7 +182,7 @@ interface InforDocument {
         }
 
         .heading-row {
-            background: #c3c3c3;
+            background-color: #c3c3c3;
             color: white;
             height: 5rem;
         }
@@ -198,7 +202,8 @@ interface InforDocument {
         .coordinates-outline {
             border: 1px solid #cdcdcd;
             border-radius: 15px;
-            overflow: hidden;
+            height: 300px;
+            overflow-y: scroll;
         }
 
         .table-grid {
@@ -209,12 +214,8 @@ interface InforDocument {
         .table-grid > div {
             padding: 10px;
             line-height: 10px;
-            border: 0.5px solid #cdcdcd;
+            /*border: 0.5px solid #cdcdcd;*/
             display: grid;
-        }
-
-        .table-grid-selected {
-            background-color: lightgray;
         }
 
         .form-outline {
@@ -312,6 +313,8 @@ export class MapComponent implements OnInit, IWidgetComponent {
     currentSliderImage = 0;
     workOrderFormVisible = false;
 
+    shortDescription = '';
+
     constructor(private readonly changeDetectionRef: ChangeDetectorRef, private fb: FormBuilder, private http: HttpClient) {
     }
 
@@ -371,7 +374,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
         });
 
         this.token = await this.getToken() as string;
-        // this.http.get('https://run.mocky.io/v3/19b7ff63-c41a-4e91-8b5a-37c9b448ef0e').pipe(take(1)).toPromise().then((apiResponse: any) => {
+        // this.http.get('https://run.mocky.io/v3/da377b86-8cac-4a35-a4a0-fd6c94ff1d82').pipe(take(1)).toPromise().then((apiResponse: any) => {
         this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
@@ -424,7 +427,6 @@ export class MapComponent implements OnInit, IWidgetComponent {
         this.workOrderFormVisible = false;
     }
 
-
     async getToken() {
         return new Promise((resolve, reject) => {
             this.http.get("https://mingle-extensions.eu1.inforcloudsuite.com/grid/rest/security/sessions/oauth")
@@ -465,7 +467,8 @@ export class MapComponent implements OnInit, IWidgetComponent {
             const mapProperties = {
                 center: new google.maps.LatLng(53.544258, 9.952000),
                 zoom: 13,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                controlSize: 20
             };
             this.map = new google.maps.Map(this.mapElement.nativeElement, mapProperties);
         } catch (err) {
@@ -499,7 +502,6 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
         });
     }
-
 
     injectGoogleMapsScript() {
         let node = document.createElement('script'); // creates the script tag
@@ -571,47 +573,113 @@ export class MapComponent implements OnInit, IWidgetComponent {
         }
         // On Down Arrow Press
         if (event.key === 'ArrowDown') {
-            if (this.gridDataFiltered.every((item: InforDocument) => !item.selected)) {
+            const indexOfSelectedRow = this.gridDataFiltered.findIndex((item: InforDocument) => item.selected);
+            if (this.gridDataFiltered[indexOfSelectedRow + 1]) {
+                this.gridDataFiltered[indexOfSelectedRow + 1].selected = true;
+                if (this.gridDataFiltered[indexOfSelectedRow]) {
+                    this.gridDataFiltered[indexOfSelectedRow].selected = false;
+                }
+            }
+            // for selection loop
+            /*else {
+                this.gridDataFiltered[0].selected = true;
+                this.gridDataFiltered[this.gridDataFiltered.length - 1].selected = false;
+            }*/
+            if (indexOfSelectedRow < 5) {
+                event.preventDefault();
+            }
+            /*if (this.gridDataFiltered.every((item: InforDocument) => !item.selected)) {
                 //Select the top item in the list.
                 this.gridDataFiltered[0].selected = true;
                 return;
             }
-            this.selectNextItemInTable();
+            this.selectNextItemInTable();*/
         }
 
 
-        //On Up Arrow Press
+        // On Up Arrow Press
         if (event.key === 'ArrowUp') {
-            if (this.gridDataFiltered.every((item: InforDocument) => !item.selected)) {
+            const indexOfSelectedRow = this.gridDataFiltered.findIndex((item: InforDocument) => item.selected);
+            if (this.gridDataFiltered[indexOfSelectedRow - 1]) {
+                this.gridDataFiltered[indexOfSelectedRow - 1].selected = true;
+                if (this.gridDataFiltered[indexOfSelectedRow]) {
+                    this.gridDataFiltered[indexOfSelectedRow].selected = false;
+                }
+            }
+            // for selection loop
+            /*else {
+                this.gridDataFiltered[this.gridDataFiltered.length - 1].selected = true;
+                this.gridDataFiltered[0].selected = false;
+            }*/
+            if (indexOfSelectedRow > this.gridDataFiltered.length - 5) {
+                event.preventDefault();
+            }
+            /*if (this.gridDataFiltered.every((item: InforDocument) => !item.selected)) {
                 //Select the top item in the list.
                 this.gridDataFiltered[this.gridDataFiltered.length - 1].selected = true;
                 return;
             }
-
             this.gridDataFiltered.reverse();
             this.selectNextItemInTable();
             this.gridDataFiltered.reverse();
-            // this.clearSelectionOnTableData();
+            this.clearSelectionOnTableData();*/
         }
-
     }
 
-    selectNextItemInTable() {
-        let itemSwitched = false;
-        this.gridDataFiltered.forEach((item: InforDocument, index: number) => {
-            if (index === this.gridDataFiltered.length) {
-                itemSwitched = false;
-                return;
+    // selectNextItemInTable() {
+    //     let itemSwitched = false;
+    //     this.gridDataFiltered.forEach((item: InforDocument, index: number) => {
+    //         if (index === this.gridDataFiltered.length) {
+    //             itemSwitched = false;
+    //             return;
+    //         }
+    //         if (item.selected) {
+    //             item.selected = false;
+    //             itemSwitched = true;
+    //             return;
+    //         }
+    //         if (itemSwitched) {
+    //             item.selected = true;
+    //             itemSwitched = false;
+    //         }
+    //     });
+    // }
+
+    send() {
+        console.log('sending...', this.token);
+        console.log('short description is ', this.inforMatchingDocuments[this.currentSliderImage].shortDescription);
+
+        const bodid = new Date().getTime();
+        const creationDateTime = new Date().toISOString();
+        const id = Math.floor(new Date().getTime() / 1000000000);
+
+        console.log('bodid is ', bodid);
+        console.log('creationDateTime is ', creationDateTime);
+        console.log('id is ', id);
+
+        const data = {
+            "documentName": "Sync.FellowWO",
+            "messageId": "message741569",
+            "fromLogicalId": "lid://infor.ims.testims",
+            "toLogicalId": "lid://default",
+            "document": {
+                "value": `<SyncFellowWO><ApplicationArea> <Sender><LogicalID>infor.ims.testims</LogicalID><ComponentID>External</ComponentID><ConfirmationCode>OnError</ConfirmationCode></Sender><CreationDateTime>${creationDateTime}</CreationDateTime><BODID>infor.ims.testims_bod:${bodid}:123fc4a8-41f1-4385-8d05-${bodid}</BODID></ApplicationArea><DataArea><Sync><AccountingEntityID>JR01_01</AccountingEntityID><LocationID>01</LocationID><ActionCriteria><ActionExpression actionCode=\"Add\"/><ChangeStatus><Code>Released</Code><Description>Freigegeben</Description><EffectiveDateTime>${creationDateTime}</EffectiveDateTime></ChangeStatus></ActionCriteria></Sync><FellowWO><ID>${id}</ID><Description>${this.inforMatchingDocuments[this.currentSliderImage].shortDescription}</Description><Equipment>0000J${id}</Equipment><Type>Breakdown</Type><Department>006</Department><Status>Freigegeben</Status><Organisation>*</Organisation></FellowWO></DataArea></SyncFellowWO>`,
+                "encoding": "NONE",
+                "characterSet": "UTF-8"
             }
-            if (item.selected) {
-                item.selected = false;
-                itemSwitched = true;
-                return;
-            }
-            if (itemSwitched) {
-                item.selected = true;
-                itemSwitched = false;
-            }
+        }
+
+        console.log(data.document.value);
+
+        this.http.post('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IONSERVICES/api/ion/messaging/service/v2/message', data, {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.token}`
+            })
+        }).toPromise().then((apiResponse: any) => {
+            console.log('api response is ', apiResponse);
+        }).catch(err => {
+            console.error('error response ', err);
         });
     }
 }

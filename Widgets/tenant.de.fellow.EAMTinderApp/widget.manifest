@@ -4,7 +4,7 @@
 	"framework": "angular",
 	"aotVersion": "",
 	"name": "EAM Tinder App",
-	"version": "1.0.1",
+	"version": "1.0.6",
 	"enablePublish": true,
 	"defaultSize": "3,2",
 	"category": "application",
