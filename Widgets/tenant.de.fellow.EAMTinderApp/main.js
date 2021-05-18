@@ -65,13 +65,63 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
         MapComponent.prototype.resetGridFilter = function () {
             this.gridDataFiltered = this.inforMatchingDocuments.slice();
         };
+        MapComponent.prototype.refreshToken = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var config;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            config = {
+                                "ti": "FELLOWCONSULTING_DEV",
+                                "cn": "EAM API",
+                                "dt": "12",
+                                "ci": "FELLOWCONSULTING_DEV~1NEdTWXC2FsUzM1W8hie8gV5gHSm62y02GeH041FnxY",
+                                "cs": "Jn3qr3UklSDWAudfxIL7ooQYV64_2gCyAv5CkraPza1LeZU8j5i_YYMz95tNKK6z9RN0MPmUdILasD3qkS0tFQ",
+                                "iu": "https://mingle-ionapi.eu1.inforcloudsuite.com",
+                                "pu": "https://mingle-sso.eu1.inforcloudsuite.com:443/FELLOWCONSULTING_DEV/as/",
+                                "oa": "authorization.oauth2",
+                                "ot": "token.oauth2",
+                                "or": "revoke_token.oauth2",
+                                "ev": "V1480769020",
+                                "v": "1.0",
+                                "saak": "FELLOWCONSULTING_DEV#FMuw2CLqvumKgSGh0o9kMx_hJIMh5MA4LUYNXjK9Jb6af1RU6fvVdZTQduDwXe2U5p3vGJmNOtX1O-ixGjQSGA",
+                                "sask": "f__eJMNVTRM8I0R42Jo0nRhF8ZXCPqgKfYRfamauBaDm0lviDmUlbxTSVC5Z8Ya1BYBUca-zC4Goj3FRrkCR7A"
+                            };
+                            return [4 /*yield*/, this.http.post("" + config.pu + config.ot, {
+                                    grant_type: "password",
+                                    username: config.saak,
+                                    password: config.sask,
+                                    scope: ''
+                                }, {
+                                    headers: {
+                                        // 'Access-Control-Allow-Origin': '*',
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                        'Authorization': 'Bearer ' + btoa(config.ci + ":" + config.cs)
+                                    }
+                                }).toPromise()];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
         MapComponent.prototype.ngOnInit = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var instance, _a;
+                var specialToken, err_1, instance, _a;
                 var _this = this;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
+                            _b.trys.push([0, 2, , 3]);
+                            return [4 /*yield*/, this.refreshToken()];
+                        case 1:
+                            specialToken = _b.sent();
+                            console.log('special token is ', specialToken);
+                            return [3 /*break*/, 3];
+                        case 2:
+                            err_1 = _b.sent();
+                            console.error('Error while getting special token.', err_1);
+                            return [3 /*break*/, 3];
+                        case 3:
                             this.injectMeta();
                             this.injectGoogleMapsScript();
                             instance = this.widgetInstance;
@@ -118,7 +168,7 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
                             });
                             _a = this;
                             return [4 /*yield*/, this.getToken()];
-                        case 1:
+                        case 4:
                             _a.token = (_b.sent());
                             // this.http.get('https://run.mocky.io/v3/da377b86-8cac-4a35-a4a0-fd6c94ff1d82').pipe(take(1)).toPromise().then((apiResponse: any) => {
                             this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
@@ -386,7 +436,7 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
                 "fromLogicalId": "lid://infor.ims.testims",
                 "toLogicalId": "lid://default",
                 "document": {
-                    "value": "<SyncFellowWO><ApplicationArea> <Sender><LogicalID>infor.ims.testims</LogicalID><ComponentID>External</ComponentID><ConfirmationCode>OnError</ConfirmationCode></Sender><CreationDateTime>" + creationDateTime + "</CreationDateTime><BODID>infor.ims.testims_bod:" + bodid + ":123fc4a8-41f1-4385-8d05-" + bodid + "</BODID></ApplicationArea><DataArea><Sync><AccountingEntityID>JR01_01</AccountingEntityID><LocationID>01</LocationID><ActionCriteria><ActionExpression actionCode=\"Add\"/><ChangeStatus><Code>Released</Code><Description>Freigegeben</Description><EffectiveDateTime>" + creationDateTime + "</EffectiveDateTime></ChangeStatus></ActionCriteria></Sync><FellowWO><ID>" + id + "</ID><Description>" + this.inforMatchingDocuments[this.currentSliderImage].shortDescription + "</Description><Equipment>0000J" + id + "</Equipment><Type>Breakdown</Type><Department>006</Department><Status>Freigegeben</Status><Organisation>*</Organisation></FellowWO></DataArea></SyncFellowWO>",
+                    "value": "<SyncFellowWO><ApplicationArea><Sender><LogicalID>infor.ims.testims</LogicalID><ComponentID>External</ComponentID><ConfirmationCode>OnError</ConfirmationCode></Sender>\n<CreationDateTime>" + creationDateTime + "</CreationDateTime>\n<BODID>infor.ims.testims_bod:" + bodid + ":123fc4a8-41f1-4385-8d05-" + bodid + "</BODID>\n</ApplicationArea><DataArea><Sync><AccountingEntityID>JR01_01</AccountingEntityID><LocationID>01</LocationID><ActionCriteria><ActionExpression actionCode=\"Add\"/><ChangeStatus><Code>Released</Code><Description>Freigegeben</Description>\n<EffectiveDateTime>" + creationDateTime + "</EffectiveDateTime></ChangeStatus></ActionCriteria></Sync><FellowWO>\n<ID>" + id + "</ID>\n<Description>" + this.inforMatchingDocuments[this.currentSliderImage].shortDescription + "</Description>\n<Equipment>0000J" + id + "</Equipment><Type>Breakdown</Type><Department>006</Department><Status>Freigegeben</Status><Organisation>*</Organisation></FellowWO></DataArea></SyncFellowWO>",
                     "encoding": "NONE",
                     "characterSet": "UTF-8"
                 }
