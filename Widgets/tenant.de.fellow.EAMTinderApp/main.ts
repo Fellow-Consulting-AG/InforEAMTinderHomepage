@@ -339,6 +339,8 @@ export class MapComponent implements OnInit, IWidgetComponent {
     workOrderFormVisible = false;
     shortDescription = '';
 
+    markers: google.maps.Marker[];
+
     constructor(private readonly changeDetectionRef: ChangeDetectorRef, private fb: FormBuilder, private http: HttpClient) {
         // setTimeout(() => {
         //     $('body').initialize('en-US');
@@ -781,12 +783,15 @@ export class MapComponent implements OnInit, IWidgetComponent {
         // this.map.setCenter(mapCenter);
 
         const bounds = new google.maps.LatLngBounds();
-        const markers = this.inforMatchingDocuments.map((location, i) => {
+        this.markers = this.inforMatchingDocuments.map((location, i) => {
             const marker: google.maps.Marker = new google.maps.Marker({
                 position: location.attributes.location,
                 // map: this.map,
                 // label: labels[i % labels.length],
-                label: this.inforMatchingDocumentsPins[location.latlng].length.toString(),
+                label: {
+                    text: this.inforMatchingDocumentsPins[location.latlng].length.toString(),
+                    color: 'white',
+                },
                 // icon: assets.marker
                 // icon: {
                 //     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -803,10 +808,23 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
         // Add a marker clusterer to manage the markers.
         // @ts-ignore
-        new MarkerClusterer(this.map, markers, {
+        new MarkerClusterer(this.map, this.markers, {
             maxZoom: 15,
             imagePath:
                 "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+        });
+
+        google.maps.event.addListener(this.map, 'zoom_changed', () => {
+            console.log('zoom level is ', this.map.getZoom());
+            let no_of_markers = 0;
+            for (let i = this.markers.length, bounds = this.map.getBounds(); i--;) {
+                if (bounds.contains(this.markers[i].getPosition())) {
+                    no_of_markers = no_of_markers + 1;
+                    // console.log('bounded', this.markers[i].getPosition().lat());
+                    // console.log('bounded', this.markers[i].getPosition().lng());
+                }
+            }
+            console.log('number of markers inside available space in map is ', no_of_markers);
         });
     }
 

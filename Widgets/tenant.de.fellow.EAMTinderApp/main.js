@@ -454,12 +454,15 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
             // // centralizing map
             // this.map.setCenter(mapCenter);
             var bounds = new google.maps.LatLngBounds();
-            var markers = this.inforMatchingDocuments.map(function (location, i) {
+            this.markers = this.inforMatchingDocuments.map(function (location, i) {
                 var marker = new google.maps.Marker({
                     position: location.attributes.location,
                     // map: this.map,
                     // label: labels[i % labels.length],
-                    label: _this.inforMatchingDocumentsPins[location.latlng].length.toString(),
+                    label: {
+                        text: _this.inforMatchingDocumentsPins[location.latlng].length.toString(),
+                        color: 'white',
+                    },
                 });
                 bounds.extend(marker.getPosition());
                 _this.attachKey(marker, location.latlng);
@@ -468,9 +471,21 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
             this.map.fitBounds(bounds);
             // Add a marker clusterer to manage the markers.
             // @ts-ignore
-            new MarkerClusterer(this.map, markers, {
+            new MarkerClusterer(this.map, this.markers, {
                 maxZoom: 15,
                 imagePath: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+            });
+            google.maps.event.addListener(this.map, 'zoom_changed', function () {
+                console.log('zoom level is ', _this.map.getZoom());
+                var no_of_markers = 0;
+                for (var i = _this.markers.length, bounds_1 = _this.map.getBounds(); i--;) {
+                    if (bounds_1.contains(_this.markers[i].getPosition())) {
+                        no_of_markers = no_of_markers + 1;
+                        // console.log('bounded', this.markers[i].getPosition().lat());
+                        // console.log('bounded', this.markers[i].getPosition().lng());
+                    }
+                }
+                console.log('number of markers inside available space in map is ', no_of_markers);
             });
         };
         // Attaches an info window to a marker with the provided message. When the
