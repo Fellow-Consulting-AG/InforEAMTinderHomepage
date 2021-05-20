@@ -10,12 +10,13 @@ import {
     ViewChild
 } from "@angular/core";
 import {SohoListViewModule} from "@infor/sohoxi-angular";
-// import {} from "googlemaps";
+import {} from "googlemaps";
 import {IWidgetComponent, IWidgetContext, IWidgetInstance} from "lime";
 import {assets} from './assets';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule, HttpHeaders} from "@angular/common/http";
 import {HttpClient} from "@angular/common/http";
+import {take} from "rxjs/operators";
 
 interface DocumentAttribute {
     pin: string;
@@ -24,7 +25,7 @@ interface DocumentAttribute {
 
 interface InforDocument {
     imageSrc: string;
-    attributes: DocumentAttribute[];
+    attributes: DocumentAttribute;
     date: string; // same date in string format
     lastChangedDate: Date; // same date in Date format
     pid: string;
@@ -33,6 +34,7 @@ interface InforDocument {
     shortDescription: string;
     equipment_id: string;
     pin: string;
+    latlng: string;
 }
 
 @Component({
@@ -79,9 +81,14 @@ interface InforDocument {
                     </div>
                 </form>
             </div>-->
-            <div style="height: 300px" class="row">
+
+            <div style="height: 300px;padding: 0" class="row">
                 <div id="datagrid">
                 </div>
+            </div>
+
+            <div style="cursor:pointer;" (click)="resetGrid()">
+                <img [src]="assets.refresh">
             </div>
 
             <!--  Third Box (Slider)    -->
@@ -184,10 +191,10 @@ interface InforDocument {
 
         .main-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 12px;
             grid-template-rows: repeat(auto-fit, 1fr);
-            gap: 3rem;
-            margin: 10px;
+            gap: 1rem;
+            margin: 7px;
         }
 
         .expanded {
@@ -321,7 +328,9 @@ export class MapComponent implements OnInit, IWidgetComponent {
         this.onKeyPress(e);
     }
 
+    inforMatchingDocumentsCopy: InforDocument[];
     inforMatchingDocuments: InforDocument[];
+    inforMatchingDocumentsPins: { [key: string]: InforDocument[] } = {};
 
     map: google.maps.Map;
     assets = assets;
@@ -351,7 +360,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
         /** FETCHING DOCUMENTS **/
         let apiResponse: any;
         try {
-            // apiResponse = await this.http.get('https://run.mocky.io/v3/beaece2c-005a-439f-97f7-0abdbb8b278f').toPromise();
+            // apiResponse = await this.http.get('https://run.mocky.io/v3/138aa5ce-9523-4ae6-bb1c-3afc57c5d53a').pipe(take(1)).toPromise();
             apiResponse = await this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -367,6 +376,46 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
         /** PROCESSING DOCUMENTS **/
         try {
+            /*this.inforMatchingDocuments = [
+                {
+                    "imageSrc": "https://idm.eu1.inforcloudsuite.com/ca/api/resources/EAM_Drone_Images-1-4-LATEST/Preview?$token=AT%2BSLJIAb0IAYmFCQl3UKF2ZxJ2W2%2FNQQbHXgWe%2Fpc8R13YSJkgPYj9X%2Fsv79cWhZEtmnb0xa%2B3b%2F61kIrloh%2Fm9fXitN09q8kYJG0wb2phjacVqNLgE1fmayKp1mxl02jKvnF1OmFSjToY%2BcvP4sphl8kJ0%2BrtL2CrrwJtnhu%2FSTqn%2FBlcn27S8k37FcVg5xvt5LZO1pCoPtM1IDqxR%2FvQzLZamOi3Lkok%2B1JDft2PNnZMoBxK0FTO1FjND2%2FR7%2Bo7GlE5JakKZxfAmBXakOfwwJg7hfit2MTinBlP8UdwELMmYVoc%2BOCfLO1l2tGDytTNrz98%3D&$tenant=FELLOWCONSULTING_DEV",
+                    "pid": "EAM_Drone_Images-1-4-LATEST",
+                    "attributes": {
+                        "location": {
+                            "lat": 53.52715367106115,
+                            "lng": 9.920700496182926
+                        },
+                        "pin": "53°32'02.1\"N 9°57'02.0\"E"
+                    },
+                    "date": "April 23, 2021",
+                    "equipment_id": "CE0010M",
+                    "pin": "53°32'02.1\"N 9°57'02.0\"E",
+                    "status": "10",
+                    selected: false,
+                    lastChangedDate: new Date(),
+                    shortDescription: '',
+                    latlng: "53.527153671061159.920700496182926"
+                },
+                {
+                    "imageSrc": "https://idm.eu1.inforcloudsuite.com/ca/api/resources/EAM_Drone_Images-15-2-LATEST/Preview?$token=ARAqSZIbb5qPJXF5wU79jY8VzvYy4qXl5brEZkEWX0EwGT0Iwyi1aC1BOXO5VfvHg9T3KtThEwTKcNsA1gbO9otaOI%2FMGJCnlCtAY%2FcjjzFYCf00WDSgPEIBdzAfG5j%2FgHBc2ntPh%2BJzMjNvRgNUCgZFDYVdENeKr6Htzq%2FLcRomGdyL8y4KT7XfLgo1Z0K7zj%2BW%2F3Qq2gg0bbt3PBSo43a2E5SYH%2FICTvmSZIpF6NwfPinbmHShT2ie1Z9TSX6PkOzTroikrw7ieXzEVN5fv7s2aSo%2BAIBKODvyrUcuTNAjI6v%2Bu%2F%2BEDK4kMHwt5lET%2FLBMi8nA&$tenant=FELLOWCONSULTING_DEV",
+                    "pid": "EAM_Drone_Images-15-2-LATEST",
+                    "attributes": {
+                        "location": {
+                            "lat": 53.532690733132995,
+                            "lng": 9.951555433572937
+                        },
+                        "pin": "53.5325967161072, 9.951293619619236"
+                    },
+                    "date": "April 23, 2021",
+                    "equipment_id": "CWF032D1",
+                    "pin": "53.5325967161072, 9.951293619619236",
+                    "status": "10",
+                    selected: false,
+                    lastChangedDate: new Date(),
+                    shortDescription: '',
+                    latlng: "53.5326907331329959.951555433572937"
+                }
+            ]*/
             this.inforMatchingDocuments = apiResponse.items.item.map((item: any) => {
                 const lastChangedTS = new Date(item.lastChangedTS);
                 const lastChangedTSString = `${lastChangedTS.toLocaleString(navigator.language, {month: "long"})} ${lastChangedTS.getDate()}, ${lastChangedTS.getFullYear()}`;
@@ -378,7 +427,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
                     (val: any) => val.name === 'Equipment_ID'
                 )[0].value;
 
-                this.addMarker(latlng);
+                // this.addMarker(latlng);
                 return {
                     imageSrc: item.resrs.res[1].url,
                     pid: item.pid,
@@ -390,11 +439,23 @@ export class MapComponent implements OnInit, IWidgetComponent {
                     lastChangedDate: lastChangedTS,
                     equipment_id: equipment_id,
                     pin: item.attrs.attr[2].value,
-                    status: '10' // 10 means initial
+                    status: '10', // 10 means initial
+                    latlng: latlng.lat.toString() + latlng.lng.toString()
                 }
             });
             console.log('Final data is ', JSON.parse(JSON.stringify(this.inforMatchingDocuments)));
+            this.inforMatchingDocumentsCopy = this.inforMatchingDocuments.slice();
+            this.inforMatchingDocuments.forEach((doc: any) => {
+                if (this.inforMatchingDocumentsPins[doc.latlng]) {
+                    this.inforMatchingDocumentsPins[doc.latlng].push(doc);
+                } else {
+                    this.inforMatchingDocumentsPins[doc.latlng] = [];
+                    this.inforMatchingDocumentsPins[doc.latlng].push(doc);
+                }
+            });
+            console.log('pin diff is ', this.inforMatchingDocumentsPins);
             this.initializeGrid();
+            this.addCluster();
         } catch (err) {
             console.error('Error while processing documents.', err);
         }
@@ -565,19 +626,6 @@ export class MapComponent implements OnInit, IWidgetComponent {
     }
 
     /**
-     * Add marker on map
-     * @param latLong - Contains lat and lng
-     * @param title
-     */
-    addMarker(latLong: { lat: number, lng: number }, title?: string) {
-        new google.maps.Marker({
-            position: latLong,
-            map: this.map,
-            title: title ? title : ''
-        });
-    }
-
-    /**
      * We show error image in case of displaying original image
      * @param sliderImage - Original infor document
      */
@@ -596,7 +644,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
             this.inforMatchingDocuments.forEach((item: InforDocument, index) => {
                 if (item.selected) {
                     // Approve on X & Reject on A
-                    item.status = event.code === 'KeyA' ? '30' : '40';
+                    item.status = event.code === 'KeyA' ? '40' : '30';
                     this.updateRow(index, item);
                 }
             })
@@ -672,10 +720,15 @@ export class MapComponent implements OnInit, IWidgetComponent {
     }
 
     injectMeta() {
-        let node = document.createElement('meta');
+        const node = document.createElement('meta');
         node.name = 'referrer';
         node.content = 'no-referrer';
         document.getElementsByTagName('head')[0].appendChild(node);
+
+        let nodee = document.createElement('script'); // creates the script tag
+        nodee.src = "https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js";
+        nodee.type = 'text/javascript'; // set the script type
+        document.getElementsByTagName('head')[0].appendChild(nodee);
     }
 
     injectGoogleMapsScript() {
@@ -690,6 +743,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
         const gmapsCallback = gmapsLoaded.bind(this);
         node.onload = <any>gmapsCallback;
+
         // append to head of document
         document.getElementsByTagName('head')[0].appendChild(node);
     }
@@ -697,15 +751,89 @@ export class MapComponent implements OnInit, IWidgetComponent {
     googleMapsLibraryLoaded() {
         try {
             const mapProperties = {
-                center: new google.maps.LatLng(53.544258, 9.952000),
+                center: new google.maps.LatLng(-85, 180),
                 zoom: 13,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                controlSize: 20
+                mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             this.map = new google.maps.Map(this.mapElement.nativeElement, mapProperties);
         } catch (err) {
             console.error('Error setting up google maps plugin.', err);
         }
+    }
+
+    /**
+     * Add cluster on map
+     */
+    addCluster() {
+        // const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let lat = 0;
+        let lng = 0;
+        this.inforMatchingDocuments.map((location, i) => {
+            lat = lat + location.attributes.location.lat
+            lng = lng + location.attributes.location.lng
+        });
+
+        // const mapCenter = {
+        //     lat: lat / this.inforMatchingDocuments.length,
+        //     lng: lng / this.inforMatchingDocuments.length
+        // };
+        // // centralizing map
+        // this.map.setCenter(mapCenter);
+
+        const bounds = new google.maps.LatLngBounds();
+        const markers = this.inforMatchingDocuments.map((location, i) => {
+            const marker: google.maps.Marker = new google.maps.Marker({
+                position: location.attributes.location,
+                // map: this.map,
+                // label: labels[i % labels.length],
+                label: this.inforMatchingDocumentsPins[location.latlng].length.toString(),
+                // icon: assets.marker
+                // icon: {
+                //     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                //     strokeColor: "red",
+                //     scale: 3
+                // }
+            });
+            bounds.extend(marker.getPosition());
+            this.attachKey(marker, location.latlng);
+            return marker;
+        });
+
+        this.map.fitBounds(bounds);
+
+        // Add a marker clusterer to manage the markers.
+        // @ts-ignore
+        new MarkerClusterer(this.map, markers, {
+            maxZoom: 15,
+            imagePath:
+                "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+        });
+    }
+
+    // Attaches an info window to a marker with the provided message. When the
+    // marker is clicked, the info window will open with the secret message.
+    attachKey(marker: google.maps.Marker, key: string) {
+        const infowindow: google.maps.InfoWindow = new google.maps.InfoWindow({
+            content: key,
+        });
+
+        marker.addListener("click", () => {
+            this.updateDataSet(this.inforMatchingDocumentsPins[infowindow.get('content')]);
+            // infowindow.open(marker.get("map"), marker);
+        });
+    }
+
+    updateDataSet(data: InforDocument[]) {
+        this.inforMatchingDocuments = JSON.parse(JSON.stringify(data));
+        const grid = $('#datagrid').data('datagrid');
+        grid.updateDataset(this.inforMatchingDocuments);
+        grid.deSelectAllRows();
+        this.currentSliderImage = 0;
+        this.selectRow(0);
+    }
+
+    resetGrid() {
+        this.updateDataSet(this.inforMatchingDocumentsCopy);
     }
 }
 
@@ -773,7 +901,6 @@ async refreshToken() {
             ]
         }];
     }*/
-
 
 /*updateItemStatus(newStatusValue: 'approved' | 'rejected') {
         this.http.put('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {

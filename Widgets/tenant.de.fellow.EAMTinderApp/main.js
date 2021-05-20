@@ -52,6 +52,7 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
             this.changeDetectionRef = changeDetectionRef;
             this.fb = fb;
             this.http = http;
+            this.inforMatchingDocumentsPins = {};
             this.assets = assets_1.assets;
             this.currentSliderImage = 0;
             this.workOrderFormVisible = false;
@@ -94,7 +95,7 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
                                     })
                                 }).toPromise()];
                         case 5:
-                            // apiResponse = await this.http.get('https://run.mocky.io/v3/beaece2c-005a-439f-97f7-0abdbb8b278f').toPromise();
+                            // apiResponse = await this.http.get('https://run.mocky.io/v3/138aa5ce-9523-4ae6-bb1c-3afc57c5d53a').pipe(take(1)).toPromise();
                             apiResponse = _b.sent();
                             console.log('Documents fetched from api are ', apiResponse);
                             return [3 /*break*/, 7];
@@ -106,6 +107,46 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
                         case 7:
                             /** PROCESSING DOCUMENTS **/
                             try {
+                                /*this.inforMatchingDocuments = [
+                                    {
+                                        "imageSrc": "https://idm.eu1.inforcloudsuite.com/ca/api/resources/EAM_Drone_Images-1-4-LATEST/Preview?$token=AT%2BSLJIAb0IAYmFCQl3UKF2ZxJ2W2%2FNQQbHXgWe%2Fpc8R13YSJkgPYj9X%2Fsv79cWhZEtmnb0xa%2B3b%2F61kIrloh%2Fm9fXitN09q8kYJG0wb2phjacVqNLgE1fmayKp1mxl02jKvnF1OmFSjToY%2BcvP4sphl8kJ0%2BrtL2CrrwJtnhu%2FSTqn%2FBlcn27S8k37FcVg5xvt5LZO1pCoPtM1IDqxR%2FvQzLZamOi3Lkok%2B1JDft2PNnZMoBxK0FTO1FjND2%2FR7%2Bo7GlE5JakKZxfAmBXakOfwwJg7hfit2MTinBlP8UdwELMmYVoc%2BOCfLO1l2tGDytTNrz98%3D&$tenant=FELLOWCONSULTING_DEV",
+                                        "pid": "EAM_Drone_Images-1-4-LATEST",
+                                        "attributes": {
+                                            "location": {
+                                                "lat": 53.52715367106115,
+                                                "lng": 9.920700496182926
+                                            },
+                                            "pin": "53°32'02.1\"N 9°57'02.0\"E"
+                                        },
+                                        "date": "April 23, 2021",
+                                        "equipment_id": "CE0010M",
+                                        "pin": "53°32'02.1\"N 9°57'02.0\"E",
+                                        "status": "10",
+                                        selected: false,
+                                        lastChangedDate: new Date(),
+                                        shortDescription: '',
+                                        latlng: "53.527153671061159.920700496182926"
+                                    },
+                                    {
+                                        "imageSrc": "https://idm.eu1.inforcloudsuite.com/ca/api/resources/EAM_Drone_Images-15-2-LATEST/Preview?$token=ARAqSZIbb5qPJXF5wU79jY8VzvYy4qXl5brEZkEWX0EwGT0Iwyi1aC1BOXO5VfvHg9T3KtThEwTKcNsA1gbO9otaOI%2FMGJCnlCtAY%2FcjjzFYCf00WDSgPEIBdzAfG5j%2FgHBc2ntPh%2BJzMjNvRgNUCgZFDYVdENeKr6Htzq%2FLcRomGdyL8y4KT7XfLgo1Z0K7zj%2BW%2F3Qq2gg0bbt3PBSo43a2E5SYH%2FICTvmSZIpF6NwfPinbmHShT2ie1Z9TSX6PkOzTroikrw7ieXzEVN5fv7s2aSo%2BAIBKODvyrUcuTNAjI6v%2Bu%2F%2BEDK4kMHwt5lET%2FLBMi8nA&$tenant=FELLOWCONSULTING_DEV",
+                                        "pid": "EAM_Drone_Images-15-2-LATEST",
+                                        "attributes": {
+                                            "location": {
+                                                "lat": 53.532690733132995,
+                                                "lng": 9.951555433572937
+                                            },
+                                            "pin": "53.5325967161072, 9.951293619619236"
+                                        },
+                                        "date": "April 23, 2021",
+                                        "equipment_id": "CWF032D1",
+                                        "pin": "53.5325967161072, 9.951293619619236",
+                                        "status": "10",
+                                        selected: false,
+                                        lastChangedDate: new Date(),
+                                        shortDescription: '',
+                                        latlng: "53.5326907331329959.951555433572937"
+                                    }
+                                ]*/
                                 this.inforMatchingDocuments = apiResponse.items.item.map(function (item) {
                                     var lastChangedTS = new Date(item.lastChangedTS);
                                     var lastChangedTSString = lastChangedTS.toLocaleString(navigator.language, { month: "long" }) + " " + lastChangedTS.getDate() + ", " + lastChangedTS.getFullYear();
@@ -114,7 +155,7 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
                                         lng: +item.attrs.attr[0].value.split(',')[1]
                                     };
                                     var equipment_id = item.attrs.attr.filter(function (val) { return val.name === 'Equipment_ID'; })[0].value;
-                                    _this.addMarker(latlng);
+                                    // this.addMarker(latlng);
                                     return {
                                         imageSrc: item.resrs.res[1].url,
                                         pid: item.pid,
@@ -126,11 +167,24 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
                                         lastChangedDate: lastChangedTS,
                                         equipment_id: equipment_id,
                                         pin: item.attrs.attr[2].value,
-                                        status: '10' // 10 means initial
+                                        status: '10',
+                                        latlng: latlng.lat.toString() + latlng.lng.toString()
                                     };
                                 });
                                 console.log('Final data is ', JSON.parse(JSON.stringify(this.inforMatchingDocuments)));
+                                this.inforMatchingDocumentsCopy = this.inforMatchingDocuments.slice();
+                                this.inforMatchingDocuments.forEach(function (doc) {
+                                    if (_this.inforMatchingDocumentsPins[doc.latlng]) {
+                                        _this.inforMatchingDocumentsPins[doc.latlng].push(doc);
+                                    }
+                                    else {
+                                        _this.inforMatchingDocumentsPins[doc.latlng] = [];
+                                        _this.inforMatchingDocumentsPins[doc.latlng].push(doc);
+                                    }
+                                });
+                                console.log('pin diff is ', this.inforMatchingDocumentsPins);
                                 this.initializeGrid();
+                                this.addCluster();
                             }
                             catch (err) {
                                 console.error('Error while processing documents.', err);
@@ -292,18 +346,6 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
             }
         };
         /**
-         * Add marker on map
-         * @param latLong - Contains lat and lng
-         * @param title
-         */
-        MapComponent.prototype.addMarker = function (latLong, title) {
-            new google.maps.Marker({
-                position: latLong,
-                map: this.map,
-                title: title ? title : ''
-            });
-        };
-        /**
          * We show error image in case of displaying original image
          * @param sliderImage - Original infor document
          */
@@ -322,7 +364,7 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
                 this.inforMatchingDocuments.forEach(function (item, index) {
                     if (item.selected) {
                         // Approve on X & Reject on A
-                        item.status = event.code === 'KeyA' ? '30' : '40';
+                        item.status = event.code === 'KeyA' ? '40' : '30';
                         _this.updateRow(index, item);
                     }
                 });
@@ -361,6 +403,10 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
             node.name = 'referrer';
             node.content = 'no-referrer';
             document.getElementsByTagName('head')[0].appendChild(node);
+            var nodee = document.createElement('script'); // creates the script tag
+            nodee.src = "https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js";
+            nodee.type = 'text/javascript'; // set the script type
+            document.getElementsByTagName('head')[0].appendChild(nodee);
         };
         MapComponent.prototype.injectGoogleMapsScript = function () {
             var node = document.createElement('script'); // creates the script tag
@@ -379,16 +425,76 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
         MapComponent.prototype.googleMapsLibraryLoaded = function () {
             try {
                 var mapProperties = {
-                    center: new google.maps.LatLng(53.544258, 9.952000),
+                    center: new google.maps.LatLng(-85, 180),
                     zoom: 13,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    controlSize: 20
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
                 this.map = new google.maps.Map(this.mapElement.nativeElement, mapProperties);
             }
             catch (err) {
                 console.error('Error setting up google maps plugin.', err);
             }
+        };
+        /**
+         * Add cluster on map
+         */
+        MapComponent.prototype.addCluster = function () {
+            var _this = this;
+            // const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var lat = 0;
+            var lng = 0;
+            this.inforMatchingDocuments.map(function (location, i) {
+                lat = lat + location.attributes.location.lat;
+                lng = lng + location.attributes.location.lng;
+            });
+            // const mapCenter = {
+            //     lat: lat / this.inforMatchingDocuments.length,
+            //     lng: lng / this.inforMatchingDocuments.length
+            // };
+            // // centralizing map
+            // this.map.setCenter(mapCenter);
+            var bounds = new google.maps.LatLngBounds();
+            var markers = this.inforMatchingDocuments.map(function (location, i) {
+                var marker = new google.maps.Marker({
+                    position: location.attributes.location,
+                    // map: this.map,
+                    // label: labels[i % labels.length],
+                    label: _this.inforMatchingDocumentsPins[location.latlng].length.toString(),
+                });
+                bounds.extend(marker.getPosition());
+                _this.attachKey(marker, location.latlng);
+                return marker;
+            });
+            this.map.fitBounds(bounds);
+            // Add a marker clusterer to manage the markers.
+            // @ts-ignore
+            new MarkerClusterer(this.map, markers, {
+                maxZoom: 15,
+                imagePath: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+            });
+        };
+        // Attaches an info window to a marker with the provided message. When the
+        // marker is clicked, the info window will open with the secret message.
+        MapComponent.prototype.attachKey = function (marker, key) {
+            var _this = this;
+            var infowindow = new google.maps.InfoWindow({
+                content: key,
+            });
+            marker.addListener("click", function () {
+                _this.updateDataSet(_this.inforMatchingDocumentsPins[infowindow.get('content')]);
+                // infowindow.open(marker.get("map"), marker);
+            });
+        };
+        MapComponent.prototype.updateDataSet = function (data) {
+            this.inforMatchingDocuments = JSON.parse(JSON.stringify(data));
+            var grid = $('#datagrid').data('datagrid');
+            grid.updateDataset(this.inforMatchingDocuments);
+            grid.deSelectAllRows();
+            this.currentSliderImage = 0;
+            this.selectRow(0);
+        };
+        MapComponent.prototype.resetGrid = function () {
+            this.updateDataSet(this.inforMatchingDocumentsCopy);
         };
         __decorate([
             core_1.Input(),
@@ -414,8 +520,8 @@ define(["require", "exports", "@angular/common", "@angular/core", "@infor/sohoxi
         ], MapComponent.prototype, "keypress", null);
         MapComponent = __decorate([
             core_1.Component({
-                template: "\n\n        <!-- **************************************   -->\n        <!-- *********      H T M L      **********   -->\n        <!-- **************************************   -->\n\n\n        <div class=\"main-container\">\n            <!-- First Box (map)           -->\n            <div>\n                <div #map style=\"width:100%;height:300px\"></div>\n            </div>\n\n            <!-- Second Box (Grid)        -->\n            <!-- <div class=\"coordinates-outline\">\n                <form [formGroup]=\"gridReactiveForm\">\n                    <div class=\"table-grid\">\n                        <div class=\"heading-row\">\n                            <select id=\"states\" name=\"states\" style=\"width: 1.5vw;\" formControlName=\"statusFilter\">\n                                <option value=\"all\">All</option>\n                                <option value=\"10\">Initial</option>\n                                <option value=\"30\">Rejected</option>\n                                <option value=\"40\">Approved</option>\n                            </select>\n                        </div>\n                        <div class=\"heading-row\">LOCATION<input type=\"text\" formControlName=\"locationFilter\"\n                                                                class=\"grid-filter-input\"></div>\n                        <div class=\"heading-row\">DATA<input type=\"text\" formControlName=\"dateFilter\"\n                                                            class=\"grid-filter-input\"></div>\n                        <ng-container *ngFor=\"let gridRow of gridDataFiltered;\">\n                            <div style=\"padding:3px; border-bottom: 3px solid #f0f0f0;\"\n                                 [style.background-image]=\"gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null\">\n                                <img width=\"20\" style=\"place-self: center\"\n                                     [src]=\"gridRow.status == '40' ? assets.checkIcon : gridRow.status == '30' ? assets.noIcon : ''\">\n                            </div>\n                            <div style=\"border-bottom: 3px solid #f0f0f0;\"\n                                 [style.background-image]=\"gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null\">{{gridRow.attributes.pin}}</div>\n                            <div style=\"border-bottom: 3px solid #f0f0f0;\"\n                                 [style.background-image]=\"gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null\">{{gridRow.date}}</div>\n                        </ng-container>\n                    </div>\n                </form>\n            </div>-->\n            <div style=\"height: 300px\" class=\"row\">\n                <div id=\"datagrid\">\n                </div>\n            </div>\n\n            <!--  Third Box (Slider)    -->\n            <div [ngClass]=\"{'expanded': !workOrderFormVisible}\">\n                <ng-container *ngIf=\"inforMatchingDocuments\">\n                    <div class=\"mby-slider-wrapper\">\n                        <div class=\"slider-container\">\n                            <div class=\"imageSlider\" [ngStyle]=\"{'left':'-' + currentSliderImage * 550+'px'}\">\n                                <div *ngFor=\"let sliderImage of inforMatchingDocuments;\"\n                                     [ngStyle]=\"{'background-image': 'url(' + sliderImage.imageSrc+ ')'}\"\n                                     style=\"background-size:cover;height:400px;width:550px;\">\n                                    <img [src]=\"sliderImage.imageSrc\" (error)=\"invalidateImage(sliderImage);\">\n                                </div>\n                            </div>\n                        </div>\n\n                        <div class=\"controls\">\n                            <div style=\"padding: 2px; cursor: pointer\"\n                                 (click)=\"inforMatchingDocuments[currentSliderImage].status = '30'; disableWorkOrderForm();\">\n                                <img [src]=\"assets.noIcon\" width=\"23\"/>\n                            </div>\n                            <div style=\"display: flex; justify-content: center\">\n                                <div>\n                                    <img src=\"{{assets.doubleArrowLeft}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToFirst()\"/>\n                                    <img src=\"{{assets.arrowLeft}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToPreviousImage()\"/>\n                                    <span class=\"slide-numbers\">{{currentSliderImage + 1}}\n                                        of {{inforMatchingDocuments.length}}</span>\n                                    <img src=\"{{assets.rightArrow}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToNextImage()\"/>\n                                    <img src=\"{{assets.doubleArrowRight}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToLast()\"/>\n                                </div>\n                            </div>\n                            <div style=\"padding-left: 19px; padding-top: 2px;cursor: pointer;\"\n                                 (click)=\"inforMatchingDocuments[currentSliderImage].status = '40'; enableWorkOrderForm();\">\n                                <img [src]=\"assets.checkIcon\" width=\"23\"/>\n                            </div>\n                        </div>\n                    </div>\n                </ng-container>\n            </div>\n\n            <!-- Fourth Box  (Form)      -->\n            <div *ngIf=\"workOrderFormVisible\">\n                <div class=\"form-outline\">\n                    <div style=\"font-size: 16px; margin-bottom: 15px\">QUICK WORKORDER</div>\n                    <div style=\"display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px\">\n                        <div>\n                            <div>\n                                <input style=\"width: 100%\" type=\"text\" id=\"first-name\" name=\"first-name\"\n                                       placeholder=\"Title\">\n                            </div>\n                            <div style=\"margin-top: 10px;\">\n                                <textarea style=\"width: 100%; height: 120px\" id=\"description\" name=\"description\"\n                                          [(ngModel)]=\"inforMatchingDocuments[currentSliderImage].shortDescription\"\n                                          placeholder=\"Short Description\"></textarea>\n                            </div>\n                        </div>\n                        <div>\n                            <div>\n                                <div [ngStyle]=\"{'background-image': 'url(' + inforMatchingDocuments[currentSliderImage].imageSrc+ ')'}\"\n                                     style=\"background-size:cover;height:165px\">\n                                </div>\n                            </div>\n                            <div style=\"float: right; font-size: 12px; margin-top: 10px\">\n                                Location: {{inforMatchingDocuments[currentSliderImage].attributes['pin']}}<br>\n                                Time: {{inforMatchingDocuments[currentSliderImage].date}}\n                            </div>\n                        </div>\n                    </div>\n\n                    <div style=\"display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px; margin-top: 20px\">\n                        <div>\n                            <!--<select style=\"width: 100%;\" id=\"states\" name=\"states\" class=\"dropdown\">\n                                <option value=\"AL\">Assign To:</option>\n                                <option value=\"CA\">California</option>\n                                <option value=\"DE\">Delaware</option>\n                                <option value=\"NY\">New York</option>\n                                <option value=\"WY\">Wyoming</option>\n                            </select>-->\n                        </div>\n                        <div>\n                            <button style=\"float: right\" class=\"btn-primary\" type=\"button\" id=\"page-button-primary\"\n                                    (click)=\"send()\">\n                                Send\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    ",
-                styles: ["\n\n        /*************************************/\n        /*****           C S S           *****/\n        /*************************************/\n\n        .main-container {\n            display: grid;\n            grid-template-columns: 1fr 1fr;\n            grid-template-rows: repeat(auto-fit, 1fr);\n            gap: 3rem;\n            margin: 10px;\n        }\n\n        .expanded {\n            grid-column: 1 / -1;\n            margin-left: 25%;\n        }\n\n        .heading-row {\n            background-color: #c3c3c3;\n            color: white;\n            height: 5rem;\n        }\n\n        .grid-filter-input {\n            height: 1.5rem;\n            color: white;\n            width: 15rem;\n            background-color: white;\n            color: black;\n            border: 0px;\n            font-size: 11px;\n            padding-left: 0px;\n            margin-top: 2px;\n        }\n\n        .coordinates-outline {\n            border: 1px solid #cdcdcd;\n            border-radius: 15px;\n            height: 300px;\n            overflow-y: scroll;\n        }\n\n        .table-grid {\n            display: grid;\n            grid-template-columns: 0.1fr 0.9fr 0.9fr;\n        }\n\n        .table-grid > div {\n            padding: 10px;\n            line-height: 10px;\n            /*border: 0.5px solid #cdcdcd;*/\n            display: grid;\n        }\n\n        .form-outline {\n            border: 1px solid #ccc;\n            border-radius: 15px;\n            padding: 10px;\n            height: 310px;\n            color: #ccc;\n        }\n\n        .controls {\n            display: grid;\n            grid-template-columns: 0.1fr 1fr 0.1fr;\n            background-color: white;\n            width: 98%;\n            margin-left: 1%;\n            padding-top: 1px;\n            border-radius: 5px;\n            height: 30px;\n            position: relative;\n            bottom: 40px;\n        }\n\n        .navigation-icon {\n            cursor: pointer;\n            height: 25px;\n        }\n\n        .slide-numbers {\n            font-size: 16px;\n            position: relative;\n            top: -7px;\n        }\n\n        .mby-slider-wrapper {\n            display: grid;\n            width: 550px;\n        }\n\n        .slider-container {\n            height: 300px;\n            overflow: hidden;\n        }\n\n        .imageSlider {\n            display: grid;\n            position: relative;\n            transition-property: left;\n            transition-duration: 0.5s;\n            transition-timing-function: ease-in-out;\n            grid-template-columns: repeat(15, 550px);\n        }\n\n        /* Dropdown: Assign To: Label color */\n        ::ng-deep .dropdown span {\n            color: #ccc;\n        }\n\n        /* Dropdown: Assign To: Width */\n        ::ng-deep .dropdown-wrapper {\n            width: 100%;\n        }\n\n        /* By default, infor grid take plae of toolbar, we don't need that */\n        ::ng-deep .row > .toolbar.do-resize {\n            display: none;\n        }\n\n        ::ng-deep .datagrid-header th {\n            background: linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%);\n        }\n    "]
+                template: "\n\n        <!-- **************************************   -->\n        <!-- *********      H T M L      **********   -->\n        <!-- **************************************   -->\n\n\n        <div class=\"main-container\">\n            <!-- First Box (map)           -->\n            <div>\n                <div #map style=\"width:100%;height:300px\"></div>\n            </div>\n\n            <!-- Second Box (Grid)        -->\n            <!-- <div class=\"coordinates-outline\">\n                <form [formGroup]=\"gridReactiveForm\">\n                    <div class=\"table-grid\">\n                        <div class=\"heading-row\">\n                            <select id=\"states\" name=\"states\" style=\"width: 1.5vw;\" formControlName=\"statusFilter\">\n                                <option value=\"all\">All</option>\n                                <option value=\"10\">Initial</option>\n                                <option value=\"30\">Rejected</option>\n                                <option value=\"40\">Approved</option>\n                            </select>\n                        </div>\n                        <div class=\"heading-row\">LOCATION<input type=\"text\" formControlName=\"locationFilter\"\n                                                                class=\"grid-filter-input\"></div>\n                        <div class=\"heading-row\">DATA<input type=\"text\" formControlName=\"dateFilter\"\n                                                            class=\"grid-filter-input\"></div>\n                        <ng-container *ngFor=\"let gridRow of gridDataFiltered;\">\n                            <div style=\"padding:3px; border-bottom: 3px solid #f0f0f0;\"\n                                 [style.background-image]=\"gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null\">\n                                <img width=\"20\" style=\"place-self: center\"\n                                     [src]=\"gridRow.status == '40' ? assets.checkIcon : gridRow.status == '30' ? assets.noIcon : ''\">\n                            </div>\n                            <div style=\"border-bottom: 3px solid #f0f0f0;\"\n                                 [style.background-image]=\"gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null\">{{gridRow.attributes.pin}}</div>\n                            <div style=\"border-bottom: 3px solid #f0f0f0;\"\n                                 [style.background-image]=\"gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null\">{{gridRow.date}}</div>\n                        </ng-container>\n                    </div>\n                </form>\n            </div>-->\n\n            <div style=\"height: 300px;padding: 0\" class=\"row\">\n                <div id=\"datagrid\">\n                </div>\n            </div>\n\n            <div style=\"cursor:pointer;\" (click)=\"resetGrid()\">\n                <img [src]=\"assets.refresh\">\n            </div>\n\n            <!--  Third Box (Slider)    -->\n            <div [ngClass]=\"{'expanded': !workOrderFormVisible}\">\n                <ng-container *ngIf=\"inforMatchingDocuments\">\n                    <div class=\"mby-slider-wrapper\">\n                        <div class=\"slider-container\">\n                            <div class=\"imageSlider\" [ngStyle]=\"{'left':'-' + currentSliderImage * 550+'px'}\">\n                                <div *ngFor=\"let sliderImage of inforMatchingDocuments;\"\n                                     [ngStyle]=\"{'background-image': 'url(' + sliderImage.imageSrc+ ')'}\"\n                                     style=\"background-size:cover;height:400px;width:550px;\">\n                                    <img [src]=\"sliderImage.imageSrc\" (error)=\"invalidateImage(sliderImage);\">\n                                </div>\n                            </div>\n                        </div>\n\n                        <div class=\"controls\">\n                            <div style=\"padding: 2px; cursor: pointer\"\n                                 (click)=\"inforMatchingDocuments[currentSliderImage].status = '30'; disableWorkOrderForm();\">\n                                <img [src]=\"assets.noIcon\" width=\"23\"/>\n                            </div>\n                            <div style=\"display: flex; justify-content: center\">\n                                <div>\n                                    <img src=\"{{assets.doubleArrowLeft}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToFirst()\"/>\n                                    <img src=\"{{assets.arrowLeft}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToPreviousImage()\"/>\n                                    <span class=\"slide-numbers\">{{currentSliderImage + 1}}\n                                        of {{inforMatchingDocuments.length}}</span>\n                                    <img src=\"{{assets.rightArrow}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToNextImage()\"/>\n                                    <img src=\"{{assets.doubleArrowRight}}\" class=\"navigation-icon\"\n                                         (click)=\"slideToLast()\"/>\n                                </div>\n                            </div>\n                            <div style=\"padding-left: 19px; padding-top: 2px;cursor: pointer;\"\n                                 (click)=\"inforMatchingDocuments[currentSliderImage].status = '40'; enableWorkOrderForm();\">\n                                <img [src]=\"assets.checkIcon\" width=\"23\"/>\n                            </div>\n                        </div>\n                    </div>\n                </ng-container>\n            </div>\n\n            <!-- Fourth Box  (Form)      -->\n            <div *ngIf=\"workOrderFormVisible\">\n                <div class=\"form-outline\">\n                    <div style=\"font-size: 16px; margin-bottom: 15px\">QUICK WORKORDER</div>\n                    <div style=\"display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px\">\n                        <div>\n                            <div>\n                                <input style=\"width: 100%\" type=\"text\" id=\"first-name\" name=\"first-name\"\n                                       placeholder=\"Title\">\n                            </div>\n                            <div style=\"margin-top: 10px;\">\n                                <textarea style=\"width: 100%; height: 120px\" id=\"description\" name=\"description\"\n                                          [(ngModel)]=\"inforMatchingDocuments[currentSliderImage].shortDescription\"\n                                          placeholder=\"Short Description\"></textarea>\n                            </div>\n                        </div>\n                        <div>\n                            <div>\n                                <div [ngStyle]=\"{'background-image': 'url(' + inforMatchingDocuments[currentSliderImage].imageSrc+ ')'}\"\n                                     style=\"background-size:cover;height:165px\">\n                                </div>\n                            </div>\n                            <div style=\"float: right; font-size: 12px; margin-top: 10px\">\n                                Location: {{inforMatchingDocuments[currentSliderImage].attributes['pin']}}<br>\n                                Time: {{inforMatchingDocuments[currentSliderImage].date}}\n                            </div>\n                        </div>\n                    </div>\n\n                    <div style=\"display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px; margin-top: 20px\">\n                        <div>\n                            <!--<select style=\"width: 100%;\" id=\"states\" name=\"states\" class=\"dropdown\">\n                                <option value=\"AL\">Assign To:</option>\n                                <option value=\"CA\">California</option>\n                                <option value=\"DE\">Delaware</option>\n                                <option value=\"NY\">New York</option>\n                                <option value=\"WY\">Wyoming</option>\n                            </select>-->\n                        </div>\n                        <div>\n                            <button style=\"float: right\" class=\"btn-primary\" type=\"button\" id=\"page-button-primary\"\n                                    (click)=\"send()\">\n                                Send\n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    ",
+                styles: ["\n\n        /*************************************/\n        /*****           C S S           *****/\n        /*************************************/\n\n        .main-container {\n            display: grid;\n            grid-template-columns: 1fr 1fr 12px;\n            grid-template-rows: repeat(auto-fit, 1fr);\n            gap: 1rem;\n            margin: 7px;\n        }\n\n        .expanded {\n            grid-column: 1 / -1;\n            margin-left: 25%;\n        }\n\n        .heading-row {\n            background-color: #c3c3c3;\n            color: white;\n            height: 5rem;\n        }\n\n        .grid-filter-input {\n            height: 1.5rem;\n            color: white;\n            width: 15rem;\n            background-color: white;\n            color: black;\n            border: 0px;\n            font-size: 11px;\n            padding-left: 0px;\n            margin-top: 2px;\n        }\n\n        .coordinates-outline {\n            border: 1px solid #cdcdcd;\n            border-radius: 15px;\n            height: 300px;\n            overflow-y: scroll;\n        }\n\n        .table-grid {\n            display: grid;\n            grid-template-columns: 0.1fr 0.9fr 0.9fr;\n        }\n\n        .table-grid > div {\n            padding: 10px;\n            line-height: 10px;\n            /*border: 0.5px solid #cdcdcd;*/\n            display: grid;\n        }\n\n        .form-outline {\n            border: 1px solid #ccc;\n            border-radius: 15px;\n            padding: 10px;\n            height: 310px;\n            color: #ccc;\n        }\n\n        .controls {\n            display: grid;\n            grid-template-columns: 0.1fr 1fr 0.1fr;\n            background-color: white;\n            width: 98%;\n            margin-left: 1%;\n            padding-top: 1px;\n            border-radius: 5px;\n            height: 30px;\n            position: relative;\n            bottom: 40px;\n        }\n\n        .navigation-icon {\n            cursor: pointer;\n            height: 25px;\n        }\n\n        .slide-numbers {\n            font-size: 16px;\n            position: relative;\n            top: -7px;\n        }\n\n        .mby-slider-wrapper {\n            display: grid;\n            width: 550px;\n        }\n\n        .slider-container {\n            height: 300px;\n            overflow: hidden;\n        }\n\n        .imageSlider {\n            display: grid;\n            position: relative;\n            transition-property: left;\n            transition-duration: 0.5s;\n            transition-timing-function: ease-in-out;\n            grid-template-columns: repeat(15, 550px);\n        }\n\n        /* Dropdown: Assign To: Label color */\n        ::ng-deep .dropdown span {\n            color: #ccc;\n        }\n\n        /* Dropdown: Assign To: Width */\n        ::ng-deep .dropdown-wrapper {\n            width: 100%;\n        }\n\n        /* By default, infor grid take plae of toolbar, we don't need that */\n        ::ng-deep .row > .toolbar.do-resize {\n            display: none;\n        }\n\n        ::ng-deep .datagrid-header th {\n            background: linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%);\n        }\n    "]
                 // changeDetection: ChangeDetectionStrategy.OnPush
             })
             /*************************************/
