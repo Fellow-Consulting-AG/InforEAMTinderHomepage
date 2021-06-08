@@ -24,6 +24,7 @@ interface DocumentAttribute {
 }
 
 interface InforDocument {
+    aclName: string;
     imageSrc: string;
     attributes: DocumentAttribute;
     date: string; // same date in string format
@@ -39,60 +40,25 @@ interface InforDocument {
 
 @Component({
     template: `
-
         <!-- **************************************   -->
         <!-- *********      H T M L      **********   -->
         <!-- **************************************   -->
-
-
         <div class="main-container">
-            <!-- First Box (map)           -->
+            <!-- First Box (map) -->
             <div>
                 <div #map style="width:100%;height:300px"></div>
             </div>
-
-            <!-- Second Box (Grid)        -->
-            <!-- <div class="coordinates-outline">
-                <form [formGroup]="gridReactiveForm">
-                    <div class="table-grid">
-                        <div class="heading-row">
-                            <select id="states" name="states" style="width: 1.5vw;" formControlName="statusFilter">
-                                <option value="all">All</option>
-                                <option value="10">Initial</option>
-                                <option value="30">Rejected</option>
-                                <option value="40">Approved</option>
-                            </select>
-                        </div>
-                        <div class="heading-row">LOCATION<input type="text" formControlName="locationFilter"
-                                                                class="grid-filter-input"></div>
-                        <div class="heading-row">DATA<input type="text" formControlName="dateFilter"
-                                                            class="grid-filter-input"></div>
-                        <ng-container *ngFor="let gridRow of gridDataFiltered;">
-                            <div style="padding:3px; border-bottom: 3px solid #f0f0f0;"
-                                 [style.background-image]="gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null">
-                                <img width="20" style="place-self: center"
-                                     [src]="gridRow.status == '40' ? assets.checkIcon : gridRow.status == '30' ? assets.noIcon : ''">
-                            </div>
-                            <div style="border-bottom: 3px solid #f0f0f0;"
-                                 [style.background-image]="gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null">{{gridRow.attributes.pin}}</div>
-                            <div style="border-bottom: 3px solid #f0f0f0;"
-                                 [style.background-image]="gridRow.selected ? 'linear-gradient(0deg, #2b79a7 0%, #4ebbfb 50%, #2b79a7 100%)' : null">{{gridRow.date}}</div>
-                        </ng-container>
-                    </div>
-                </form>
-            </div>-->
-
+            <!-- Second Box (grid) -->
             <div style="height: 300px;padding: 0" class="row">
                 <div id="datagrid">
                 </div>
             </div>
-
+            <!-- Third Box (reset button) -->
             <div style="cursor:pointer;" (click)="resetGrid()">
                 <img [src]="assets.refresh">
             </div>
-
-            <!--  Third Box (Slider)    -->
-            <div [ngClass]="{'expanded': !workOrderFormVisible}">
+            <!--  Slider   -->
+            <div class="expanded">
                 <ng-container *ngIf="inforMatchingDocuments">
                     <div class="mby-slider-wrapper">
                         <div class="slider-container">
@@ -104,10 +70,9 @@ interface InforDocument {
                                 </div>
                             </div>
                         </div>
-
                         <div class="controls">
                             <div style="padding: 2px; cursor: pointer"
-                                 (click)="inforMatchingDocuments[currentSliderImage].status = '30'; disableWorkOrderForm();">
+                                 (click)="disableWorkOrderForm();">
                                 <img [src]="assets.noIcon" width="23"/>
                             </div>
                             <div style="display: flex; justify-content: center">
@@ -125,70 +90,112 @@ interface InforDocument {
                                 </div>
                             </div>
                             <div style="padding-left: 19px; padding-top: 2px;cursor: pointer;"
-                                 (click)="inforMatchingDocuments[currentSliderImage].status = '40'; enableWorkOrderForm();">
+                                 (click)="enableWorkOrderForm(); openDialog()"
+                            >
+                                <!--(click)="inforMatchingDocuments[currentSliderImage].status = '40'; enableWorkOrderForm();"-->
                                 <img [src]="assets.checkIcon" width="23"/>
                             </div>
                         </div>
                     </div>
                 </ng-container>
             </div>
-
-            <!-- Fourth Box  (Form)      -->
-            <div *ngIf="workOrderFormVisible">
-                <div class="form-outline">
-                    <div style="font-size: 16px; margin-bottom: 15px">QUICK WORKORDER</div>
-                    <div style="display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px">
-                        <div>
+        </div>
+        <div class="modal" id="workOrderModal" style="width: 600px; display: none">
+            <div class="modal-content">
+                <div class="modal-header" style="display: flex">
+                    <div style="width: 50%">
+                        <!--<h3>QUICK WORKORDER</h3>-->
+                        <div style="font-size: 16px; margin-bottom: 15px">QUICK WORKORDER</div>
+                    </div>
+                    <!--<div style="width: 50%">
+                        <button style="float: right" type="button" (click)="closeDialog()"><img
+                                [src]="close"
+                                class="openDialogIcon"/></button>
+                    </div>-->
+                </div>
+                <div class="modal-body">
+                    <!-- Fourth Box  (Form)      -->
+                    <div>
+                        <div style="display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px">
                             <div>
-                                <input style="width: 100%" type="text" id="first-name" name="first-name"
-                                       placeholder="Title">
-                            </div>
-                            <div style="margin-top: 10px;">
-                                <textarea style="width: 100%; height: 120px" id="description" name="description"
-                                          [(ngModel)]="inforMatchingDocuments[currentSliderImage].shortDescription"
-                                          placeholder="Short Description"></textarea>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div [ngStyle]="{'background-image': 'url(' + inforMatchingDocuments[currentSliderImage].imageSrc+ ')'}"
-                                     style="background-size:cover;height:165px">
+                                <div>
+                                        <textarea style="width: 100%; height: 165px" id="description" name="description"
+                                                  [(ngModel)]="inforMatchingDocuments[currentSliderImage].shortDescription"
+                                                  placeholder="Short Description"></textarea>
+                                </div>
+                                <div>
+                                    <select style="width: 100%;" id="assignTo" class="dropdown"
+                                            placeholder="Assign To">
+                                        <option value="">&nbsp;</option>
+                                        <option value="AFRIEDMANNN">Andreas Friedmann</option>
+                                        <option value="AKONZAN"> Andreas Konzan</option>
+                                        <option value="ASCHOLZ">Anke Scholz</option>
+                                        <option value="BFINK">Birgit Fink</option>
+                                        <option value="CBEHR">Carsten Behr</option>
+                                        <option value="CTHEISSEN">Christian Theissen</option>
+                                        <option value="DANIEL_JORDAN">Daniel Jordan</option>
+                                        <option value="EKNOPP">Ernst Knopp</option>
+                                        <option value="FMEIER">Florian Meier</option>
+                                        <option value="FNEUMANN">Felix Neumann</option>
+                                        <option value="HEGERM">Heger Manfred</option>
+                                        <option value="INESBRANDO1">Ines Brandao</option>
+                                        <option value="JREISS">Jochen Reib</option>
+                                        <option value="KERSTIN_MENDE">Kerstin Mende</option>
+                                        <option value="MANUEL_KANKA">Manuel Kanka</option>
+                                        <option value="MEGGERS">Monika Eggers</option>
+                                        <option value="MEIERF">Meier Friedrich</option>
+                                        <option value="MRRERICKS">Martin Frericks</option>
+                                        <option value="MUELLERM">Mueller Max</option>
+                                        <option value="MWIRTZ">Marco Wirtz</option>
+                                        <option value="PLANG">Phillip Lang</option>
+                                        <option value="RAETHELE">Raethel Elmar</option>
+                                        <option value="REHLK">Rehl Kari</option>
+                                        <option value="SCHILZED">Schulze Dennis</option>
+                                        <option value="SSCHULZ">Sebastian Schulz</option>
+                                        <option value="STEFFENSS">Steffens Sebastian</option>
+                                        <option value="TBERGMANN">Tim Bergmann</option>
+                                        <option value="TSCHUSTER">Tim Schuster</option>
+                                        <option value="WEBERT">Weber Till</option>
+                                    </select>
                                 </div>
                             </div>
-                            <div style="float: right; font-size: 12px; margin-top: 10px">
-                                Location: {{inforMatchingDocuments[currentSliderImage].attributes['pin']}}<br>
-                                Time: {{inforMatchingDocuments[currentSliderImage].date}}
+                            <div>
+                                <div>
+                                    <img [src]="inforMatchingDocuments[currentSliderImage].imageSrc" height="165px">
+                                    <!--<div [ngStyle]="{'background-image': 'url(' + inforMatchingDocuments[currentSliderImage].imageSrc+ ')'}"
+                                         style="background-size:cover;height:165px">
+                                    </div>-->
+                                </div>
+                                <div style="float: right; font-size: 12px; margin-top: 10px">
+                                    Location: {{inforMatchingDocuments[currentSliderImage].attributes['pin']}}<br>
+                                    Time: {{inforMatchingDocuments[currentSliderImage].date}}
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div style="display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px; margin-top: 20px">
-                        <div>
-                            <!--<select style="width: 100%;" id="states" name="states" class="dropdown">
-                                <option value="AL">Assign To:</option>
-                                <option value="CA">California</option>
-                                <option value="DE">Delaware</option>
-                                <option value="NY">New York</option>
-                                <option value="WY">Wyoming</option>
-                            </select>-->
-                        </div>
-                        <div>
-                            <button style="float: right" class="btn-primary" type="button" id="page-button-primary"
-                                    (click)="send()">
-                                Send
-                            </button>
+                        <div style="display:grid; grid-template-columns: 0.6fr 0.4fr; grid-gap: 10px; margin-top: 20px">
+                            <!--<div>
+                                <button style="float: right" class="btn-primary" type="button"
+                                        id="page-button-primary"
+                                        (click)="send()">
+                                    Send
+                                </button>
+                            </div>-->
                         </div>
                     </div>
+                    <!--<div class="modal-buttonset">
+                        <button type="button" id="generate" class="btn-modal-primary" style="width:50%">Generate
+                        </button>
+                        <button type="button" id="cancel" class="btn-modal" style="width:50%">Cancel</button>
+                        <button type="button" id="submit" class="btn-modal-primary" style="width:50%">Submit</button>
+                    </div>-->
                 </div>
             </div>
         </div>
     `,
     styles: [`
-
         /*************************************/
         /*****           C S S           *****/
         /*************************************/
-
         .main-container {
             display: grid;
             grid-template-columns: 1fr 1fr 12px;
@@ -336,39 +343,56 @@ export class MapComponent implements OnInit, IWidgetComponent {
     assets = assets;
     token: string;
     currentSliderImage = 0;
-    workOrderFormVisible = false;
     shortDescription = '';
 
     markers: google.maps.Marker[];
+
+    // manifest properties
+    tenantName: string = '';
+    organizationCode: string = "";
+    departmentCode: string = '';
+
+    dialogOpened = false;
 
     constructor(private readonly changeDetectionRef: ChangeDetectorRef, private fb: FormBuilder, private http: HttpClient) {
         // setTimeout(() => {
         //     $('body').initialize('en-US');
         // }, 200);
+        setTimeout(() => {
+            // @ts-ignore
+            $('.dropdown').dropdown();
+        }, 200);
     }
 
     async ngOnInit() {
+        this.syncFromWidgetSettings();
         this.injectMeta();
-        this.injectGoogleMapsScript();
 
         /** GENERATING TOKEN **/
-        try {
-            this.token = await this.http.get("https://mingle-extensions.eu1.inforcloudsuite.com/grid/rest/security/sessions/oauth", {responseType: 'text'}).toPromise();
-            console.log('token is ', this.token);
-        } catch (err) {
-            console.error('prepareData: Error getting token.', err);
+        if (window.location.hostname !== 'localhost') {
+            try {
+                this.token = await this.http.get("https://mingle-extensions.eu1.inforcloudsuite.com/grid/rest/security/sessions/oauth", {responseType: 'text'}).toPromise();
+                console.log('token is ', this.token);
+            } catch (err) {
+                console.error('prepareData: Error getting token.', err);
+                $('body').toast({title: 'Error', message: 'Error while getting token.'});
+            }
         }
 
         /** FETCHING DOCUMENTS **/
         let apiResponse: any;
         try {
-            // apiResponse = await this.http.get('https://run.mocky.io/v3/138aa5ce-9523-4ae6-bb1c-3afc57c5d53a').pipe(take(1)).toPromise();
-            apiResponse = await this.http.get('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000', {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.token}`
-                })
-            }).toPromise();
+            if (window.location.hostname === 'localhost') {
+                apiResponse = await this.http.get('https://run.mocky.io/v3/138aa5ce-9523-4ae6-bb1c-3afc57c5d53a').pipe(take(1)).toPromise();
+            } else {
+                apiResponse = await this.http.get(`https://mingle-ionapi.eu1.inforcloudsuite.com/${this.tenantName}/IDM/api/items/search?%24query=%2FEAM_Drone_Images&%24offset=0&%24limit=1000`, {
+                    headers: new HttpHeaders({
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.token}`
+                    })
+                }).toPromise();
+            }
+
             console.log('Documents fetched from api are ', apiResponse);
         } catch (err) {
             console.error('Error while fetching documents.', err);
@@ -378,46 +402,6 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
         /** PROCESSING DOCUMENTS **/
         try {
-            /*this.inforMatchingDocuments = [
-                {
-                    "imageSrc": "https://idm.eu1.inforcloudsuite.com/ca/api/resources/EAM_Drone_Images-1-4-LATEST/Preview?$token=AT%2BSLJIAb0IAYmFCQl3UKF2ZxJ2W2%2FNQQbHXgWe%2Fpc8R13YSJkgPYj9X%2Fsv79cWhZEtmnb0xa%2B3b%2F61kIrloh%2Fm9fXitN09q8kYJG0wb2phjacVqNLgE1fmayKp1mxl02jKvnF1OmFSjToY%2BcvP4sphl8kJ0%2BrtL2CrrwJtnhu%2FSTqn%2FBlcn27S8k37FcVg5xvt5LZO1pCoPtM1IDqxR%2FvQzLZamOi3Lkok%2B1JDft2PNnZMoBxK0FTO1FjND2%2FR7%2Bo7GlE5JakKZxfAmBXakOfwwJg7hfit2MTinBlP8UdwELMmYVoc%2BOCfLO1l2tGDytTNrz98%3D&$tenant=FELLOWCONSULTING_DEV",
-                    "pid": "EAM_Drone_Images-1-4-LATEST",
-                    "attributes": {
-                        "location": {
-                            "lat": 53.52715367106115,
-                            "lng": 9.920700496182926
-                        },
-                        "pin": "53°32'02.1\"N 9°57'02.0\"E"
-                    },
-                    "date": "April 23, 2021",
-                    "equipment_id": "CE0010M",
-                    "pin": "53°32'02.1\"N 9°57'02.0\"E",
-                    "status": "10",
-                    selected: false,
-                    lastChangedDate: new Date(),
-                    shortDescription: '',
-                    latlng: "53.527153671061159.920700496182926"
-                },
-                {
-                    "imageSrc": "https://idm.eu1.inforcloudsuite.com/ca/api/resources/EAM_Drone_Images-15-2-LATEST/Preview?$token=ARAqSZIbb5qPJXF5wU79jY8VzvYy4qXl5brEZkEWX0EwGT0Iwyi1aC1BOXO5VfvHg9T3KtThEwTKcNsA1gbO9otaOI%2FMGJCnlCtAY%2FcjjzFYCf00WDSgPEIBdzAfG5j%2FgHBc2ntPh%2BJzMjNvRgNUCgZFDYVdENeKr6Htzq%2FLcRomGdyL8y4KT7XfLgo1Z0K7zj%2BW%2F3Qq2gg0bbt3PBSo43a2E5SYH%2FICTvmSZIpF6NwfPinbmHShT2ie1Z9TSX6PkOzTroikrw7ieXzEVN5fv7s2aSo%2BAIBKODvyrUcuTNAjI6v%2Bu%2F%2BEDK4kMHwt5lET%2FLBMi8nA&$tenant=FELLOWCONSULTING_DEV",
-                    "pid": "EAM_Drone_Images-15-2-LATEST",
-                    "attributes": {
-                        "location": {
-                            "lat": 53.532690733132995,
-                            "lng": 9.951555433572937
-                        },
-                        "pin": "53.5325967161072, 9.951293619619236"
-                    },
-                    "date": "April 23, 2021",
-                    "equipment_id": "CWF032D1",
-                    "pin": "53.5325967161072, 9.951293619619236",
-                    "status": "10",
-                    selected: false,
-                    lastChangedDate: new Date(),
-                    shortDescription: '',
-                    latlng: "53.5326907331329959.951555433572937"
-                }
-            ]*/
             this.inforMatchingDocuments = apiResponse.items.item.map((item: any) => {
                 const lastChangedTS = new Date(item.lastChangedTS);
                 const lastChangedTSString = `${lastChangedTS.toLocaleString(navigator.language, {month: "long"})} ${lastChangedTS.getDate()}, ${lastChangedTS.getFullYear()}`;
@@ -431,6 +415,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
 
                 // this.addMarker(latlng);
                 return {
+                    aclName: item.acl.name,
                     imageSrc: item.resrs.res[1].url,
                     pid: item.pid,
                     attributes: {
@@ -438,14 +423,14 @@ export class MapComponent implements OnInit, IWidgetComponent {
                         pin: item.attrs.attr[2].value
                     },
                     date: lastChangedTSString,
-                    lastChangedDate: lastChangedTS,
+                    lastChangedDate: new Date(item.lastChangedTS),
                     equipment_id: equipment_id,
                     pin: item.attrs.attr[2].value,
                     status: '10', // 10 means initial
                     latlng: latlng.lat.toString() + latlng.lng.toString()
                 }
             });
-            console.log('Final data is ', JSON.parse(JSON.stringify(this.inforMatchingDocuments)));
+            console.log('Data after processed ', JSON.parse(JSON.stringify(this.inforMatchingDocuments)));
             this.inforMatchingDocumentsCopy = this.inforMatchingDocuments.slice();
             this.inforMatchingDocuments.forEach((doc: any) => {
                 if (this.inforMatchingDocumentsPins[doc.latlng]) {
@@ -455,9 +440,11 @@ export class MapComponent implements OnInit, IWidgetComponent {
                     this.inforMatchingDocumentsPins[doc.latlng].push(doc);
                 }
             });
-            console.log('pin diff is ', this.inforMatchingDocumentsPins);
+            console.log('Unique data ', this.inforMatchingDocumentsPins);
             this.initializeGrid();
-            this.addCluster();
+            setTimeout(() => {
+                this.addCluster();
+            }, 1000)
         } catch (err) {
             console.error('Error while processing documents.', err);
         }
@@ -551,7 +538,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
             // console.log('on activecellchange', e, args);
             this.selectRow(args.row);
         });
-        // this.selectRow(0);
+        this.selectRow(0);
     }
 
     /**
@@ -569,7 +556,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
             }
         })
         this.currentSliderImage = rowIndex;
-        this.enableWorkOrderForm();
+        // this.enableWorkOrderForm();
     }
 
     /**
@@ -580,50 +567,148 @@ export class MapComponent implements OnInit, IWidgetComponent {
     updateRow(rowIndex: number, rowData: InforDocument) {
         const gridApi = $('#datagrid').data('datagrid');
         gridApi.updateRow(rowIndex, rowData);
+        this.saveStatus(rowData.pid, rowData.status, rowData.aclName);
+    }
+
+    // [Initial, Draft, Approved, Rejected]
+    saveStatus(pid: string, status: string, aclName: string) {
+        if (window.location.hostname === 'localhost') {
+            return;
+        }
+        const StatusAttributesUpdate: any = {
+            item: {
+                attrs: {
+                    attr: [{
+                        name: 'DocumentStatus',
+                        value: status === '40' ? 'Approved' : (status === '30' ? 'Rejected' : 'Draft')
+                    }]
+                },
+                resrs: {
+                    res: []
+                },
+                acl: {
+                    name: aclName
+                },
+                pid: pid
+            }
+        }
+
+        console.log('body of object to update status is  ', StatusAttributesUpdate);
+
+        // checking in first (SAFE SIDE)
+        // this.http.get(`https://idm.eu1.inforcloudsuite.com/ca/api/items/${pid}/checkin`, {
+        //     headers: new HttpHeaders({
+        //         'Authorization': `Bearer ${this.token}`,
+        //     })
+        // }).toPromise().then((formAttributesUpdateApiResponse: any) => {
+        //     console.log('checkin successfully');
+        this.http.put(`https://mingle-ionapi.eu1.inforcloudsuite.com/${this.tenantName}/IDM/api/items/${pid}?%24checkout=true&%24checkin=true&%24merge=true`, StatusAttributesUpdate, {
+            responseType: 'text',
+            headers: new HttpHeaders({
+                'accept': 'application/xml;charset=utf-8',
+                'Content-Type': 'application/json;charset=utf-8',
+                'Authorization': `Bearer ${this.token}`,
+            })
+        }).toPromise().then((formAttributesUpdateApiResponse: any) => {
+            console.log('form attributes updated ', formAttributesUpdateApiResponse);
+            $('body').toast({title: 'Success', message: 'Successfully updated status.'});
+        }).catch(err => {
+            const error = err.error.replace('\n', ' ').replace('\r', '');
+            const message = /<detail>(.*?)<\/detail>/g.exec(error)[1];
+            console.error('Error while updating status.', err.error);
+            $('body').toast({title: 'Error', message: message ? message : 'Error while updating status.'});
+        });
+        // }).catch(err => {
+        //     console.error('Error while updating status.', err);
+        //     $('body').toast({title: 'Error', message: 'Error while updating status.'});
+        // });
+    }
+
+    openDialog() {
+        this.dialogOpened = true;
+        var ddVal = $('#assignTo').data('dropdown');
+        ddVal.selectValue('');
+
+        /*$('#assignTo').on('selected', (event) => {
+            // '.dropdown').val()
+            $('#assignTo').val().toString();
+        });*/
+
+        let a: SohoModalFullSize;
+        a = 'responsive';
+        // a = 'always';
+
+        $('body').modal({
+            content: $('#workOrderModal'),
+            buttons: [{
+                text: 'Close',
+                click: function (e, modal) {
+                    // $('#assignTo').off();
+                    modal.close();
+                }
+            }, {
+                text: 'Send',
+                click: (e, modal) => {
+                    if (window.location.hostname !== 'localhost') {
+                        this.send($('#assignTo').val().toString() ? $('#assignTo').val().toString() : '').then((message: string) => {
+                            $('body').toast({title: 'Success', message: message});
+                            // $('#assignTo').off();
+                            modal.close();
+                        }).catch(err => {
+                            $('body').toast({title: 'Error', message: err.message});
+                        })
+                    } else {
+                        // $('#assignTo').off();
+                        modal.close();
+                    }
+                }
+            }],
+            fullsize: a,
+            overlayOpacity: 0.5
+        });
+
+        $('.modal').on('beforeclose', () => {
+            this.dialogOpened = false;
+        });
     }
 
     /**
      * Show work order form
      */
     enableWorkOrderForm() {
+        this.inforMatchingDocuments[this.currentSliderImage].status = '40';
         this.updateRow(this.currentSliderImage, this.inforMatchingDocuments[this.currentSliderImage]);
-
-        if (this.workOrderFormVisible) {
-            return;
-        }
-        this.workOrderFormVisible = true;
-
-        setTimeout(() => {
-            // @ts-ignore
-            $('.dropdown').dropdown();
-        }, 200);
     }
 
     /**
      * Hide work order form
      */
     disableWorkOrderForm() {
+        this.inforMatchingDocuments[this.currentSliderImage].status = '30';
         this.updateRow(this.currentSliderImage, this.inforMatchingDocuments[this.currentSliderImage]);
-        this.workOrderFormVisible = false;
     }
 
     slideToFirst() {
         this.currentSliderImage = 0;
+        this.selectRow(this.currentSliderImage);
     }
 
     slideToLast() {
         this.currentSliderImage = this.inforMatchingDocuments.length - 1;
+        this.selectRow(this.currentSliderImage);
     }
 
     slideToNextImage() {
         if (this.currentSliderImage < this.inforMatchingDocuments.length - 1) {
             this.currentSliderImage++;
+            this.selectRow(this.currentSliderImage);
         }
     }
 
     slideToPreviousImage() {
         if (this.currentSliderImage > 0) {
             this.currentSliderImage--;
+            this.selectRow(this.currentSliderImage);
         }
     }
 
@@ -642,6 +727,9 @@ export class MapComponent implements OnInit, IWidgetComponent {
      * @private
      */
     private onKeyPress(event: KeyboardEvent) {
+        if (this.dialogOpened) {
+            return;
+        }
         if (event.code === 'KeyA' || event.code === 'KeyX') {
             this.inforMatchingDocuments.forEach((item: InforDocument, index) => {
                 if (item.selected) {
@@ -656,15 +744,15 @@ export class MapComponent implements OnInit, IWidgetComponent {
     /**
      * UPDATE WORK ORDER (SHORT DESCRIPTION)
      */
-    send() {
+    async send(userAssigned: string) {
+        console.log('User assigned is ', $('#assignTo').val());
         if (!this.inforMatchingDocuments[this.currentSliderImage].equipment_id) {
-            $('body').toast({title: 'Error', message: 'No equipment code found.'});
-            return;
+            throw Error('No equipment code found.')
         }
         const data = `<?xml version="1.0" encoding="utf-8" ?>
 <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <Header>
-        <Tenant>FELLOWCONSULTING_DEV</Tenant>
+        <Tenant>${this.tenantName}</Tenant>
         <SessionScenario xmlns="http://schemas.datastream.net/headers">terminate</SessionScenario>
         <Organization xmlns="http://schemas.datastream.net/headers">*</Organization>
     </Header>
@@ -674,7 +762,7 @@ export class MapComponent implements OnInit, IWidgetComponent {
                 <WORKORDERID auto_generated="true" xmlns="http://schemas.datastream.net/MP_fields">
                     <JOBNUM></JOBNUM>
                     <ORGANIZATIONID entity="User">
-                        <ORGANIZATIONCODE>01</ORGANIZATIONCODE>
+                        <ORGANIZATIONCODE>${this.organizationCode}</ORGANIZATIONCODE>
                     </ORGANIZATIONID>
                     <DESCRIPTION>${this.inforMatchingDocuments[this.currentSliderImage].shortDescription}</DESCRIPTION>
                 </WORKORDERID>
@@ -684,25 +772,30 @@ export class MapComponent implements OnInit, IWidgetComponent {
                 <EQUIPMENTID xmlns="http://schemas.datastream.net/MP_fields">
                     <EQUIPMENTCODE>${this.inforMatchingDocuments[this.currentSliderImage].equipment_id}</EQUIPMENTCODE>
                     <ORGANIZATIONID entity="Organization">
-                        <ORGANIZATIONCODE>01</ORGANIZATIONCODE>
+                        <ORGANIZATIONCODE>${this.organizationCode}</ORGANIZATIONCODE>
                     </ORGANIZATIONID>
                 </EQUIPMENTID>
                 <TYPE entity="User" xmlns="http://schemas.datastream.net/MP_fields">
                     <TYPECODE>BRKD</TYPECODE>
                 </TYPE>
                 <DEPARTMENTID xmlns="http://schemas.datastream.net/MP_fields">
-                    <DEPARTMENTCODE>DRONENDEMO</DEPARTMENTCODE>
+                    <DEPARTMENTCODE>${this.departmentCode}</DEPARTMENTCODE>
                     <ORGANIZATIONID entity="Group">
                         <ORGANIZATIONCODE>*</ORGANIZATIONCODE>
                     </ORGANIZATIONID>
                 </DEPARTMENTID>
+                 <ASSIGNEDTO xmlns="http://schemas.datastream.net/MP_fields">
+                    <PERSONCODE>${userAssigned}</PERSONCODE>
+                </ASSIGNEDTO>
              <FIXED xmlns="http://schemas.datastream.net/MP_fields"></FIXED>
             </WorkOrder>
         </MP0023_AddWorkOrder_001>
     </Body>
 </Envelope>`
 
-        this.http.post('https://mingle-ionapi.eu1.inforcloudsuite.com/FELLOWCONSULTING_DEV/EAM/axis/services/EWSConnector/EWSConnector', data, {
+        console.log('work order payload is ', data);
+
+        return this.http.post(`https://mingle-ionapi.eu1.inforcloudsuite.com/${this.tenantName}/EAM/axis/services/EWSConnector/EWSConnector`, data, {
             responseType: 'text',
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
@@ -712,13 +805,37 @@ export class MapComponent implements OnInit, IWidgetComponent {
             try {
                 console.log('Workload api response is ', apiResponse);
                 const message = /<ns1:Message>(.*?)<\/ns1:Message>/g.exec(apiResponse)[1];
-                $('body').toast({title: 'Success', message: message});
+                return message;
+                // $('body').toast({title: 'Success', message: message});
             } catch (err) {
-                $('body').toast({title: 'Success', message: 'Work order successfully updated.'});
+                console.error('Error while extracting message from response but work order saved.', err);
+                return "Work order successfully updated.";
+                // $('body').toast({title: 'Success', message: 'Work order successfully updated.'});
             }
         }).catch(err => {
-            $('body').toast({title: 'Error', message: 'Error while updating work order.'});
+            console.error('Error while updating work order.', err);
+            throw Error('Error while updating work order.');
         });
+    }
+
+    /**
+     * Update Grid Data
+     * @param data - Data
+     */
+    updateDataSet(data: InforDocument[]) {
+        this.inforMatchingDocuments = JSON.parse(JSON.stringify(data));
+        const grid = $('#datagrid').data('datagrid');
+        grid.updateDataset(this.inforMatchingDocuments);
+        grid.deSelectAllRows();
+        this.currentSliderImage = 0;
+        this.selectRow(0);
+    }
+
+    /**
+     * Display all data in grid
+     */
+    resetGrid() {
+        this.updateDataSet(this.inforMatchingDocumentsCopy);
     }
 
     injectMeta() {
@@ -727,10 +844,16 @@ export class MapComponent implements OnInit, IWidgetComponent {
         node.content = 'no-referrer';
         document.getElementsByTagName('head')[0].appendChild(node);
 
-        let nodee = document.createElement('script'); // creates the script tag
-        nodee.src = "https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js";
-        nodee.type = 'text/javascript'; // set the script type
-        document.getElementsByTagName('head')[0].appendChild(nodee);
+        this.injectClusterScript();
+    }
+
+    injectClusterScript() {
+        let script = document.createElement('script'); // creates the script tag
+        script.src = "https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js";
+        script.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        this.injectGoogleMapsScript();
     }
 
     injectGoogleMapsScript() {
@@ -764,57 +887,50 @@ export class MapComponent implements OnInit, IWidgetComponent {
     }
 
     /**
-     * Add cluster on map
+     * Add clusters/markers on map on map
      */
     addCluster() {
-        // const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let lat = 0;
-        let lng = 0;
-        this.inforMatchingDocuments.map((location, i) => {
-            lat = lat + location.attributes.location.lat
-            lng = lng + location.attributes.location.lng
-        });
-
-        // const mapCenter = {
-        //     lat: lat / this.inforMatchingDocuments.length,
-        //     lng: lng / this.inforMatchingDocuments.length
-        // };
-        // // centralizing map
-        // this.map.setCenter(mapCenter);
-
         const bounds = new google.maps.LatLngBounds();
         this.markers = this.inforMatchingDocuments.map((location, i) => {
             const marker: google.maps.Marker = new google.maps.Marker({
                 position: location.attributes.location,
                 // map: this.map,
-                // label: labels[i % labels.length],
+                // label: 'Direct label',
                 label: {
                     text: this.inforMatchingDocumentsPins[location.latlng].length.toString(),
-                    color: 'white',
+                    // color: 'white'
                 },
-                // icon: assets.marker
-                // icon: {
-                //     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                //     strokeColor: "red",
-                //     scale: 3
-                // }
+                icon: {
+                    url: assets.marker,
+                    scaledSize: new google.maps.Size(40, 40), // scaled big images to small sizes
+                    labelOrigin: new google.maps.Point(20, 15) // setting position of label on marker
+                }
             });
+            // show map in such a way that all clusters/markers show on screen (no hidden marker) (centralize)
             bounds.extend(marker.getPosition());
+            // attaching key with markers (to show data in grid when marker clicked)
             this.attachKey(marker, location.latlng);
             return marker;
         });
-
+        // show map in such a way that all clusters/markers show on screen (no hidden marker) (centralize)
         this.map.fitBounds(bounds);
 
-        // Add a marker clusterer to manage the markers.
+        /** CREATING CLUSTER **/
         // @ts-ignore
         new MarkerClusterer(this.map, this.markers, {
-            maxZoom: 15,
-            imagePath:
-                "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+            // maxZoom: 15,
+            styles: [{
+                height: 46,
+                url: assets.cluster,
+                width: 46,
+                textColor: 'white',
+                anchorText: [16, 0] // [vertical,horizontal]
+            }]
         });
 
-        google.maps.event.addListener(this.map, 'zoom_changed', () => {
+        /** TESTING: MAY BE WE NEED IT LATER **/
+        /** On Zoom, show which markers are currently in the map boundary **/
+        /*google.maps.event.addListener(this.map, 'zoom_changed', () => {
             console.log('zoom level is ', this.map.getZoom());
             let no_of_markers = 0;
             for (let i = this.markers.length, bounds = this.map.getBounds(); i--;) {
@@ -825,11 +941,14 @@ export class MapComponent implements OnInit, IWidgetComponent {
                 }
             }
             console.log('number of markers inside available space in map is ', no_of_markers);
-        });
+        });*/
     }
 
-    // Attaches an info window to a marker with the provided message. When the
-    // marker is clicked, the info window will open with the secret message.
+    /**
+     * attaching key with markers (to show data in grid when marker clicked)
+     * @param marker - Marker
+     * @param key - (lan+lan).toString() | KEY
+     */
     attachKey(marker: google.maps.Marker, key: string) {
         const infowindow: google.maps.InfoWindow = new google.maps.InfoWindow({
             content: key,
@@ -841,17 +960,13 @@ export class MapComponent implements OnInit, IWidgetComponent {
         });
     }
 
-    updateDataSet(data: InforDocument[]) {
-        this.inforMatchingDocuments = JSON.parse(JSON.stringify(data));
-        const grid = $('#datagrid').data('datagrid');
-        grid.updateDataset(this.inforMatchingDocuments);
-        grid.deSelectAllRows();
-        this.currentSliderImage = 0;
-        this.selectRow(0);
-    }
-
-    resetGrid() {
-        this.updateDataSet(this.inforMatchingDocumentsCopy);
+    syncFromWidgetSettings() {
+        this.tenantName = this.widgetContext.getSettings().get<string>("Tenant");
+        this.organizationCode = this.widgetContext.getSettings().get<string>("Organization");
+        this.departmentCode = this.widgetContext.getSettings().get<string>("Department");
+        console.log('**************************** tenant name is ', this.tenantName);
+        console.log('**************************** organizationCode is ', this.organizationCode);
+        console.log('**************************** departmentCode is ', this.departmentCode);
     }
 }
 
@@ -882,7 +997,6 @@ async refreshToken() {
            "saak": "FELLOWCONSULTING_DEV#bxFTqeWylzBeff3ZtsoDk2kPcrPdDfcAp7ZW0T9G8LsEPIBNFsv7lA838njAhPnQiSNVGUxDpo5vzA4qHgybwg",
            "sask": "rtjQI2MDBk-TiKUfymebiR9RqdZ517FZREJaT_APukw4oDkc6B3tKnV4r6w6cU8aJEnQObXks9XFIv_gDi0Yrg"
        };
-
        return await this.http.post(
            `https://mingle-sso.eu1.inforcloudsuite.com:443/FELLOWCONSULTING_DEV/as/token.oauth2`,
            {
@@ -907,7 +1021,6 @@ async refreshToken() {
         // For dynamic settings / values that need to be resolved asynchronously,
         // implement IWidgetInstance getMetadataAsync() instead.
         // For known/hardcoded values, place the metadata in the manifest instead.
-
         return [{
             labelId: "order",
             type: WidgetSettingsType.selectorType,
@@ -927,6 +1040,5 @@ async refreshToken() {
                 'Authorization': `Bearer ${this.token}`
             })
         }).toPromise().then((apiResponse: any) => {
-
         });
     }*/

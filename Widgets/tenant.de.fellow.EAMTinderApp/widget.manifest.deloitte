@@ -1,0 +1,40 @@
+{
+	"widgetId": "tenant.de.fellow.EAMTinderApp",
+	"type": "inline",
+	"framework": "angular",
+	"aotVersion": "",
+	"name": "EAM Tinder App",
+	"version": "1.0.6",
+	"enablePublish": true,
+	"defaultSize": "3,2",
+	"category": "application",
+	"applicationLogicalId": "lid://infor.homepages",
+	"moduleName": "widget",
+	"author": "Fellow Consulting",
+	"settings": [
+		{
+			"name": "Tenant",
+			"type": "string",
+			"defaultValue": "DELOITTE"
+		},
+		{
+		    "name": "Organization",
+		    "type": "string",
+		    "defaultValue": "DELOITTE"
+		},
+		{
+		    "name": "Department",
+		    "type": "string",
+		    "defaultValue": "HHLA_SKY"
+		}
+	],
+	"localization": {
+		"en-US": {
+			"widgetTitle": "Maps",
+			"widgetDescription": "Maps widget for Infor Homepages",
+			"order": "Order",
+			"ascending": "Ascending",
+			"descending": "Descending"			
+		}
+	}
+}

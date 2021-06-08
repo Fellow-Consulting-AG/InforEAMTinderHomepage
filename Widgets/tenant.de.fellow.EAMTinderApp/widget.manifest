@@ -11,13 +11,30 @@
 	"applicationLogicalId": "lid://infor.homepages",
 	"moduleName": "widget",
 	"author": "Fellow Consulting",
+	"settings": [
+		{
+			"name": "Tenant",
+			"type": "string",
+			"defaultValue": "FELLOWCONSULTING_DEV"
+		},
+		{
+		    "name": "Organization",
+		    "type": "string",
+		    "defaultValue": "01"
+		},
+		{
+		    "name": "Department",
+		    "type": "string",
+		    "defaultValue": "DRONENDEMO"
+		}
+	],
 	"localization": {
 		"en-US": {
 			"widgetTitle": "Maps",
 			"widgetDescription": "Maps widget for Infor Homepages",
 			"order": "Order",
 			"ascending": "Ascending",
-			"descending": "Descending"
+			"descending": "Descending"			
 		}
 	}
 }
