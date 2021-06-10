@@ -15,17 +15,17 @@
 		{
 			"name": "Tenant",
 			"type": "string",
-			"defaultValue": "FELLOWCONSULTING_DEV"
+			"defaultValue": "DELOITTE"
 		},
 		{
 		    "name": "Organization",
 		    "type": "string",
-		    "defaultValue": "01"
+		    "defaultValue": "DELOITTE"
 		},
 		{
 		    "name": "Department",
 		    "type": "string",
-		    "defaultValue": "DRONENDEMO"
+		    "defaultValue": "HHLA_SKY"
 		}
 	],
 	"localization": {
